@@ -1,9 +1,14 @@
 package battaglianavale;
 
-public class Partita implements Runnable
+import java.net.ServerSocket;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+public class Partita
 {
     private int mat[][];
     private int dimensione;
+    public Player currentPlayer;
     
     public Partita()
     {
@@ -15,6 +20,8 @@ public class Partita implements Runnable
         {0,0,1,0,0}
         };
         this.dimensione=5;
+        
+        this.start();
     }
     private boolean controllo(int i, int j)
     {
@@ -33,6 +40,19 @@ public class Partita implements Runnable
             //controllo j-- e i--
         }
         //controllo lati
-        
+     return false;   
+    }
+
+    private void start()
+    {
+        try (ServerSocket listener = new ServerSocket(58901))
+        {
+            System.out.println("Server is Running...");
+            ExecutorService pool = Executors.newFixedThreadPool(200);
+            pool.execute(new Player(listener.accept(), this));
+            pool.execute(new Player(listener.accept(), this));
+        }
+        catch (Exception E)
+        {}
     }
 }
