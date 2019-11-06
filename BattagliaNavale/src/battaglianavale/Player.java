@@ -43,7 +43,7 @@ public class Player implements Runnable
         {
             input = new Scanner(socket.getInputStream());
             output = new PrintWriter(socket.getOutputStream(), true);
-            
+            output.println(partita.getDimensioneCampo());
         }
         catch(Exception E)
         {

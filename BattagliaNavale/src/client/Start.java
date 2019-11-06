@@ -1,9 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package Client;
+package client;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -17,29 +12,34 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-/**
- *
- * @author informatica
- */
-public class BattagliaNavaleClient 
+public class Start 
 {
-    private JFrame frame = new JFrame("Battaglia Navale");
-    private JLabel messageLabel = new JLabel("...");
+    private JFrame frame;
+    private JLabel messageLabel;
     
-    private int dim=21;
-    private Square[] board = new Square[dim*dim];
+   // private int dim=21;
+    private Square[] board;
     private Square currentSquare;
 
     private Socket socket;
     private Scanner input;
     private PrintWriter output;
+    public static void setup()
+    {
+        
     
-    public BattagliaNavaleClient(String serverAddress) throws Exception 
+    }
+   
+    
+    public Start(String serverAddress) throws Exception 
     {
        socket = new Socket(serverAddress, 50900);
        input = new Scanner(socket.getInputStream());
        output = new PrintWriter(socket.getOutputStream(), true);
-       
+       int dim=Integer.parseInt(input.nextLine());
+       board = new Square[dim*dim];
+       messageLabel= new JLabel("...");
+       frame = new JFrame("Battaglia Navale");
         //aggiungere controllo sui partecipanti
         
         //permettere inserimento navi
@@ -70,7 +70,7 @@ public class BattagliaNavaleClient
            board[i].addMouseListener(new MouseAdapter() {
                public void mousePressed(MouseEvent e) {
                    currentSquare = board[j];
-                   out.println("MOVE " + j);
+                   output.println("MOVE " + j);
                }
            });
            boardPanel.add(board[i]);

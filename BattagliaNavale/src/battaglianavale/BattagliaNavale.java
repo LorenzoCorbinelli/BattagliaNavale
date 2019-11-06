@@ -8,7 +8,7 @@ public class BattagliaNavale
     {
         if(args.length == 0)
         {
-            client.Start.Main();
+            client.Start.setup();
         }
         else if(args[0] == "-server")
         {
