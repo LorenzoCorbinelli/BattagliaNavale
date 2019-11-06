@@ -23,6 +23,13 @@ public class Partita
         
         this.start();
     }
+    
+    public Partita(int dimensioneGriglia)
+    {
+        this.dimensione=dimensioneGriglia;
+        this.start();
+    }
+    
     private boolean controllo(int i, int j)
     {
         //controllo angoli
@@ -57,6 +64,6 @@ public class Partita
     }
     int getDimensioneCampo()
     {
-        return 0;
+        return this.dimensione;
     }
 }
