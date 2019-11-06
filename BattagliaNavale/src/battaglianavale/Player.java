@@ -43,6 +43,7 @@ public class Player implements Runnable
         {
             input = new Scanner(socket.getInputStream());
             output = new PrintWriter(socket.getOutputStream(), true);
+            
         }
         catch(Exception E)
         {

@@ -1,4 +1,5 @@
 package battaglianavale;
+import client.*;
 
 public class BattagliaNavale 
 {
@@ -7,7 +8,7 @@ public class BattagliaNavale
     {
         if(args.length == 0)
         {
-            System.out.println("<HELP>");
+            client.Start.Main();
         }
         else if(args[0] == "-server")
         {
@@ -15,7 +16,7 @@ public class BattagliaNavale
         }
         else
         {
-            //client
+            System.out.println("<HELP>");
         }
     }
     
