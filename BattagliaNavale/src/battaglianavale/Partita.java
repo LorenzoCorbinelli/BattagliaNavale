@@ -55,4 +55,8 @@ public class Partita
         catch (Exception E)
         {}
     }
+    int getDimensioneCampo()
+    {
+        return 0;
+    }
 }
