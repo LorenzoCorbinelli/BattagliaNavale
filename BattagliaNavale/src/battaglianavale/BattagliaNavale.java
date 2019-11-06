@@ -7,11 +7,14 @@ public class BattagliaNavale
     {
         if(args.length == 0)
         {
-            System.out.println("<HELP>");
+            
         }
         else if(args[0] == "-server")
         {
-            Partita P = new Partita();
+            if (args.length > 1)
+                new Partita(Integer.parseInt(args[1]));
+            else
+                new Partita();
         }
         else
         {
