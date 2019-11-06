@@ -10,6 +10,14 @@ public class Nave
     {
         pezzi = new ArrayList<>();
     }
+    
+    public Nave(ArrayList<Pezzo> pezzi)
+    {
+        for(Pezzo p : pezzi)
+        {
+            this.pezzi.add(p);
+        }
+    }
 
     public boolean add(int x, int y)
     {
