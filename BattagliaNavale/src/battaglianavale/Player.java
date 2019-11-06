@@ -66,17 +66,17 @@ public class Player implements Runnable
         int i = 0;
         while (i < 3)
         {
-            output.println("???");
-            String c = input.nextLine();
-            if(inserisciNave(0,0,'n',0))
+            output.println("INSERT 2");  //comando al client per inserire navi di lunghezza 2
+            String[] c = input.nextLine().split(" ");    //coordinate e direzione ricevute dal client
+            //AGGIUNGERE CONTROLLI
+            if(inserisciNave(Integer.parseInt(c[0]),Integer.parseInt(c[1]),c[2].charAt(0),2)) //x,y,direzione,lunghezza
             {
                 i++;
-                output.println("???");
+                output.println("OK");
             }
             else
             {
-                System.out.println("ErRoRe");
-                output.println("???");
+                output.println("ERROR 0");
             }
         }
     }

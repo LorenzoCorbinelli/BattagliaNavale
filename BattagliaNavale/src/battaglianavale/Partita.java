@@ -52,7 +52,7 @@ public class Partita
 
     private void start()
     {
-        try (ServerSocket listener = new ServerSocket(58901))
+        try (ServerSocket listener = new ServerSocket(50900))
         {
             System.out.println("Server is Running...");
             ExecutorService pool = Executors.newFixedThreadPool(200);

@@ -2,6 +2,7 @@ package client;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -10,9 +11,10 @@ import java.net.Socket;
 import java.util.Scanner;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-public class Start 
+public class Start
 {
     private JFrame frame;
     private JLabel messageLabel;
@@ -20,7 +22,7 @@ public class Start
    // private int dim=21;
     private Square[] board;
     private Square currentSquare;
-
+    private int dim;
     private Socket socket;
     private Scanner input;
     private PrintWriter output;
@@ -35,11 +37,17 @@ public class Start
     {
        socket = new Socket(serverAddress, 50900);
        input = new Scanner(socket.getInputStream());
-       output = new PrintWriter(socket.getOutputStream(), true);
-       int dim=Integer.parseInt(input.nextLine());
+       output = new PrintWriter(socket.getOutputStream(), true); 
+       dim=Integer.parseInt(input.nextLine());  //ricevo dimensione dal server
+       frame = new JFrame("Battaglia Navale");
        board = new Square[dim*dim];
        messageLabel= new JLabel("...");
-       frame = new JFrame("Battaglia Navale");
+       frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+       frame.setPreferredSize(new Dimension(505, 487));
+       
+       frame.setVisible(true);
+      // frame.setResizable(false);
+       frame.pack();
         //aggiungere controllo sui partecipanti
         
         //permettere inserimento navi
@@ -63,18 +71,22 @@ public class Start
 
        JPanel boardPanel = new JPanel();
        boardPanel.setBackground(Color.black);
-       boardPanel.setLayout(new GridLayout(3, 3, 2, 2));
+       boardPanel.setLayout(new GridLayout(dim, dim,1,1));
        for (int i = 0; i < board.length; i++) {
            final int j = i;
            board[i] = new Square();
            board[i].addMouseListener(new MouseAdapter() {
-               public void mousePressed(MouseEvent e) {
-                   currentSquare = board[j];
-                   output.println("MOVE " + j);
+               public void squareClick(MouseEvent e) {
+                    currentSquare = board[j];
+                    String dir=JOptionPane.showInputDialog("Inserisci la direzione");
+                    output.println(j%dim+ " "+j/dim+" "+dir.charAt(0)); //j%dim = x, j/dim = y, dir.charAt(0) = direzione
                }
            });
            boardPanel.add(board[i]);
        }
-       frame.getContentPane().add(boardPanel, BorderLayout.CENTER);
+       boardPanel.setSize(505,497);
+       frame.add(boardPanel);
+       frame.pack();
     }
+    
 }
