@@ -56,8 +56,8 @@ public class Partita
         {
             System.out.println("Server is Running...");
             ExecutorService pool = Executors.newFixedThreadPool(200);
-            pool.execute(new Player(listener.accept(), this));
-            pool.execute(new Player(listener.accept(), this));
+            while(true) //FOR TESTING PURPOSES
+                pool.execute(new Player(listener.accept(), this));
         }
         catch (Exception E)
         {}

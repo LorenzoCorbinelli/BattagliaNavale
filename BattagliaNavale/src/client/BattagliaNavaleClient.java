@@ -10,9 +10,11 @@ import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.PrintWriter;
 import static java.lang.System.out;
 import java.net.Socket;
+import java.util.Arrays;
 import java.util.Scanner;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -22,7 +24,7 @@ import javax.swing.JPanel;
  *
  * @author informatica
  */
-public class BattagliaNavaleClient 
+public class BattagliaNavaleClient implements MouseListener
 {
     private JFrame frame = new JFrame("Battaglia Navale");
     private JLabel messageLabel = new JLabel("...");
@@ -36,46 +38,56 @@ public class BattagliaNavaleClient
     private PrintWriter output;
     
     public BattagliaNavaleClient(String serverAddress) throws Exception 
+    {}
+    
+    void insert(int pos)
     {
-       socket = new Socket(serverAddress, 50900);
-       input = new Scanner(socket.getInputStream());
-       output = new PrintWriter(socket.getOutputStream(), true);
-       
-        //aggiungere controllo sui partecipanti
-        
-        //permettere inserimento navi
-        
-        //controllo che tutti abbiano inserito tutte le navi disponibili
-        
-        //inizio gioco
-        
-        //giocata
-        
-            //colpito o acqua?
-            
-            //punteggio
-            
-            //partita finita?
-            
-        //attendogiocata avversario
-       
-       messageLabel.setBackground(Color.lightGray);
-       frame.getContentPane().add(messageLabel, BorderLayout.SOUTH);
+        output.println(pos + " N");
+        String status = input.nextLine();
+        System.out.println(status);
+        if(status.equals("OK"))
+        {
+            while(input.hasNextLine())
+            {
+                String comm = input.nextLine();
+                System.out.println(comm);
+                int coords = Integer.parseInt(comm.split(" ")[1]);
+                board[coords].setBackground(Color.red);
+            }
+        }
+        else if (status.startsWith("ERR"))
+        {
+            switch(status.split(" ")[1])    //Error code
+            {
+                
+            }
+        }
+    }
 
-       JPanel boardPanel = new JPanel();
-       boardPanel.setBackground(Color.black);
-       boardPanel.setLayout(new GridLayout(3, 3, 2, 2));
-       for (int i = 0; i < board.length; i++) {
-           final int j = i;
-           board[i] = new Square();
-           board[i].addMouseListener(new MouseAdapter() {
-               public void mousePressed(MouseEvent e) {
-                   currentSquare = board[j];
-                   out.println("MOVE " + j);
-               }
-           });
-           boardPanel.add(board[i]);
-       }
-       frame.getContentPane().add(boardPanel, BorderLayout.CENTER);
+    @Override
+    public void mouseClicked(MouseEvent e)
+    {
+        //Check status
+        insert(Arrays.asList(board).indexOf(e.getSource()));
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

@@ -8,6 +8,7 @@ package battaglianavale;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Scanner;
 
 /**
@@ -66,17 +67,27 @@ public class Player implements Runnable
         int i = 0;
         while (i < 3)
         {
-            output.println("INSERT 2");  //comando al client per inserire navi di lunghezza 2
+            //output.println("INS 2");  //comando al client per inserire navi di lunghezza 2
             String[] c = input.nextLine().split(" ");    //coordinate e direzione ricevute dal client
+            System.out.println(Arrays.toString(c));
+            int x = Integer.parseInt(c[0])%partita.getDimensioneCampo();
+            int y = Integer.parseInt(c[0])/partita.getDimensioneCampo();
             //AGGIUNGERE CONTROLLI
-            if(inserisciNave(Integer.parseInt(c[0]),Integer.parseInt(c[1]),c[2].charAt(0),2)) //x,y,direzione,lunghezza
+            if(inserisciNave(x, y, c[1].charAt(0), 2)) //x,y,direzione,lunghezza
             {
                 i++;
                 output.println("OK");
+                for(Nave n : navi)
+                {
+                    for(Pezzo p : n.pezzi)
+                    {
+                        output.println("PIE " + (partita.getDimensioneCampo() * p.y) + p.x);
+                    }
+                }
             }
             else
             {
-                output.println("ERROR 0");
+                output.println("ERR 0");
             }
         }
     }
