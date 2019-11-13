@@ -10,12 +10,12 @@ public class BattagliaNavale
         {
             try
             {
-                new BattagliaNavaleClient("127.0.0.1");
+                new BattagliaNavaleClient("127.0.0.1"); //connessione del client al server sullo stesso host 
             }catch(Exception e){}
         }
-        else if(args[0].equals("-server"))
+        else if(args[0].equals("-server")) //server
         {
-            if (args.length > 1)
+            if (args.length > 1) 
                 new Partita(Integer.parseInt(args[1]));
             else
                 new Partita();
