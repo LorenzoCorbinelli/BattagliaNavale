@@ -88,7 +88,7 @@ public class BattagliaNavaleClient implements MouseListener
 
     void insert(int pos)
     {
-        output.println(pos + " N");
+        output.println(pos + " n");
         String status = input.nextLine();
         System.out.println(status);
         if(status.equals("OK"))

@@ -13,6 +13,7 @@ public class Nave
     
     public Nave(ArrayList<Pezzo> pezzi)
     {
+        this.pezzi = new ArrayList<>();
         for(Pezzo p : pezzi)
         {
             this.pezzi.add(p);

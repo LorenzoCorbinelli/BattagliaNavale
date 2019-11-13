@@ -81,7 +81,7 @@ public class Player implements Runnable
                 {
                     for(Pezzo p : n.pezzi)
                     {
-                        output.println("PIE " + (partita.getDimensioneCampo() * p.y) + p.x);
+                        output.println("PIE " + ((partita.getDimensioneCampo() * p.y) + p.x));
                     }
                 }
             }
