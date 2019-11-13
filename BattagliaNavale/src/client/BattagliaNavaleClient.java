@@ -105,6 +105,7 @@ public class BattagliaNavaleClient implements MouseListener
         {
             switch(status.split(" ")[1])    //Error code
             {
+                
             }
         }
     }
