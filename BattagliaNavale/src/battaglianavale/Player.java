@@ -69,6 +69,7 @@ public class Player implements Runnable
         
         while (i < 3) //here start a cycle that will continue until i is less than 3
         {
+            output.println("INS 2");
             output.println("Inserisci la "+(i+1)+"° nave da 2"); //print a new line in output that specify to the player that he/she have to insert the boat
             if(inserisciNave(2)) //check if inserisciNave was successful
             {
@@ -78,23 +79,28 @@ public class Player implements Runnable
         i=0; //reset the fixed value
         while (i < 2) //here start a cycle that will continue until i is less than 2
         {
-           output.println("Inserisci la "+(i+1)+"° nave da 3"); //print a new line in output that specify to the player that he/she have to insert the boat
-           if(inserisciNave(3)) //check if inserisciNave was successful
-              i++; //increment a local variable i
+            output.println("INS 3");
+            output.println("Inserisci la "+(i+1)+"° nave da 3"); //print a new line in output that specify to the player that he/she have to insert the boat
+            if(inserisciNave(3)) //check if inserisciNave was successful
+                i++; //increment a local variable i
         }
-        //TODO: METTERE DO WHILE
-        output.println("Inserisci la nave da 4"); //print a new line in output that specify to the player that he/she have to insert the boat
-        while(!inserisciNave(4)) //check if inserisciNave wasn't successful
+        do
         {
+            output.println("INS 4");
             output.println("Inserisci la nave da 4"); //print a new line in output that specify to the player that he/she have to insert the boat
-        }
-        output.println("Inserisci la nave da 5"); //print a new line in output that specify to the player that he/she have to insert the boat
-        while(!inserisciNave(5)) //check if inserisciNave wasn't successful
+        }while(!inserisciNave(4)); //check if inserisciNave wasn't successful
+        
+        do
         {
+            output.println("INS 5");
             output.println("Inserisci la nave da 5"); //print a new line in output that specify to the player that he/she have to insert the boat
-        }
+        }while(!inserisciNave(4)); //check if inserisciNave wasn't successful
+        
         if(this.avversario==null) //check if there isn't another player connectto the server
+        {   
+            output.println("WAT");
             output.println("Attendi che un altro giocatore si connetta..."); //print a new line in output taht specify that theclient havn't an opponent
+        }
     }
     
     private boolean inserisciNave(int len) //inserisciNave' method with parameters (dimension of the boat)
@@ -102,17 +108,17 @@ public class Player implements Runnable
           //output.println("INS 2");  //command to the client to insert the two-pieces boat 
             String[] c = input.nextLine().split(" "); //declaration of a new variable that was initialized with coordinates and direction of the boat 
             System.out.println(Arrays.toString(c)); //print in terminal the array like a string
-            int x = Integer.parseInt(c[0])%partita.getDimensioneCampo(); //declaration of a new variable x for coordinateX that was initialized with the value in c[0] modulation with the dimensions of the player's court
-            int y = Integer.parseInt(c[0])/partita.getDimensioneCampo();  //declaration of a new variable x for coordinateX that was initialized with the value in c[0] divided by the dimensions of the player's court
+            int x = Integer.parseInt(c[0]); //declaration of a new variable x for coordinateX that was initialized with the value in c[0] modulation with the dimensions of the player's court
+            int y = Integer.parseInt(c[1]);  //declaration of a new variable x for coordinateX that was initialized with the value in c[0] divided by the dimensions of the player's court
             //AGGIUNGERE CONTROLLI
-            if(controllaNave(x, y, c[1].charAt(0), len)) //check if the method controlloNave returns true //x,y,direzione,lunghezza
+            if(controllaNave(x, y, c[2].charAt(0), len)) //check if the method controlloNave returns true //x,y,direzione,lunghezza
             {
                 output.println("OK"); //print in output a new line 'OK'
                 for(Nave n : navi) 
                 {
                     for(Pezzo p : n.pezzi)
                     {
-                        output.println("PIE " + ((partita.getDimensioneCampo() * p.y) + p.x));
+                        output.println("PIE " + p.x + ' ' + p.y);
                     }
                 }
                 output.println("END");
@@ -176,7 +182,7 @@ public class Player implements Runnable
                         for(int j = c.y - 1; j <= c.y + 1; j++)
                         {
                             if(p.x == i && p.y == j)
-                                return false;   //TO BE TESTED
+                                return false;   //TO BE TESTED-- Working :D
                         }
                     }
                 }
