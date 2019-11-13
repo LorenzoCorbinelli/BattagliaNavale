@@ -1,2 +1,4 @@
 /BattagliaNavale/build/
 /BattagliaNavale/dist/
+
+*.class
