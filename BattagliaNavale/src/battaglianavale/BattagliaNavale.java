@@ -10,7 +10,7 @@ public class BattagliaNavale
         {
             try
             {
-                Start s = new Start("127.0.0.1");
+                new BattagliaNavaleClient("127.0.0.1");
             }catch(Exception e){}
         }
         else if(args[0].equals("-server"))

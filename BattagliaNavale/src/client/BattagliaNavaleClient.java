@@ -1,45 +1,91 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package client;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.PrintWriter;
-import static java.lang.System.out;
 import java.net.Socket;
 import java.util.Arrays;
 import java.util.Scanner;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-/**
- *
- * @author informatica
- */
 public class BattagliaNavaleClient implements MouseListener
 {
-    private JFrame frame = new JFrame("Battaglia Navale");
-    private JLabel messageLabel = new JLabel("...");
+    private JFrame frame;
+    private JLabel messageLabel;
     
-    private int dim=21;
-    private Square[] board = new Square[dim*dim];
+   // private int dim=21;
+    private Square[] board;
     private Square currentSquare;
-
+    private int dim;
     private Socket socket;
     private Scanner input;
     private PrintWriter output;
+    public static void setup()
+    {
+        
+    
+    }
+   
     
     public BattagliaNavaleClient(String serverAddress) throws Exception 
-    {}
+    {
+       socket = new Socket(serverAddress, 50900);
+       input = new Scanner(socket.getInputStream());
+       output = new PrintWriter(socket.getOutputStream(), true); 
+       dim=Integer.parseInt(input.nextLine());  //ricevo dimensione dal server
+       frame = new JFrame("Battaglia Navale");
+       board = new Square[dim*dim];
+       messageLabel= new JLabel("...");
+       frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+       frame.setPreferredSize(new Dimension(505, 487));
+       
+       frame.setVisible(true);
+      // frame.setResizable(false);
+       frame.pack();
+        //aggiungere controllo sui partecipanti
+        
+        //permettere inserimento navi
+        
+        //controllo che tutti abbiano inserito tutte le navi disponibili
+        
+        //inizio gioco
+        
+        //giocata
+        
+            //colpito o acqua?
+            
+            //punteggio
+            
+            //partita finita?
+            
+        //attendogiocata avversario
+       
+       messageLabel.setBackground(Color.lightGray);
+       frame.getContentPane().add(messageLabel, BorderLayout.SOUTH);
+
+       JPanel boardPanel = new JPanel();
+       boardPanel.setBackground(Color.black);
+       boardPanel.setLayout(new GridLayout(dim, dim,1,1));
+       for (int i = 0; i < board.length; i++) {
+           final int j = i;
+           board[i] = new Square();
+           board[i].addMouseListener(this);
+           boardPanel.add(board[i]);
+       }
+       boardPanel.setSize(505,497);
+       frame.add(boardPanel);
+       frame.pack();
+    }
     
+
     void insert(int pos)
     {
         output.println(pos + " N");
@@ -59,7 +105,6 @@ public class BattagliaNavaleClient implements MouseListener
         {
             switch(status.split(" ")[1])    //Error code
             {
-                
             }
         }
     }
