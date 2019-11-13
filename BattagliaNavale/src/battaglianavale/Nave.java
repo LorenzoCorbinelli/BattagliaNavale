@@ -13,6 +13,7 @@ public class Nave
     
     public Nave(ArrayList<Pezzo> pezzi) //constructor with parametetrs (a Pezzo's list of 'pezzi')
     {
+        this.pezzi = new ArrayList<>(); //new istance of array
         for(Pezzo p : pezzi) //for each Pezzo in array pezzi
         {
             this.pezzi.add(p); //add a new pezzo
