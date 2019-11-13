@@ -69,45 +69,45 @@ public class Player implements Runnable
         
         while (i < 3) //here start a cycle that will continue until i is less than 3
         {
-          output.println("Inserisci la "+(i+1)+"° nave da 2");
-          if(inserisciNave(2))
-          {
-              i++;
-          }
+            output.println("Inserisci la "+(i+1)+"° nave da 2"); //print a new line in output that specify to the player that he/she have to insert the boat
+            if(inserisciNave(2)) //check if inserisciNave was successful
+            {
+                i++; //increment a local variable i
+            }
         }
-        i=0;
-        while (i < 2)
+        i=0; //reset the fixed value
+        while (i < 2) //here start a cycle that will continue until i is less than 2
         {
-           output.println("Inserisci la "+(i+1)+"° nave da 3");
-           if(inserisciNave(3))
-              i++; 
+           output.println("Inserisci la "+(i+1)+"° nave da 3"); //print a new line in output that specify to the player that he/she have to insert the boat
+           if(inserisciNave(3)) //check if inserisciNave was successful
+              i++; //increment a local variable i
         }
-        output.println("Inserisci la nave da 4");
-        while(!inserisciNave(4))
+        output.println("Inserisci la nave da 4"); //print a new line in output that specify to the player that he/she have to insert the boat
+        while(!inserisciNave(4)) //check if inserisciNave wasn't successful
         {
-            output.println("Inserisci la nave da 4");
+            output.println("Inserisci la nave da 4"); //print a new line in output that specify to the player that he/she have to insert the boat
         }
-        output.println("Inserisci la nave da 5");
-        while(!inserisciNave(5))
+        output.println("Inserisci la nave da 5"); //print a new line in output that specify to the player that he/she have to insert the boat
+        while(!inserisciNave(5)) //check if inserisciNave wasn't successful
         {
-            output.println("Inserisci la nave da 5");
+            output.println("Inserisci la nave da 5"); //print a new line in output that specify to the player that he/she have to insert the boat
         }
-        if(this.avversario==null)
-            output.println("Attendi che un altro giocatore si connetta...");
+        if(this.avversario==null) //check if there isn't another player connectto the server
+            output.println("Attendi che un altro giocatore si connetta..."); //print a new line in output taht specify that theclient havn't an opponent
     }
     
-    private boolean inserisciNave(int len)
+    private boolean inserisciNave(int len) //inserisciNave' method with parameters (dimension of the boat)
     {
-          //output.println("INS 2");  //comando al client per inserire navi di lunghezza 2
-            String[] c = input.nextLine().split(" ");    //coordinate e direzione ricevute dal client
-            System.out.println(Arrays.toString(c));
-            int x = Integer.parseInt(c[0])%partita.getDimensioneCampo();
-            int y = Integer.parseInt(c[0])/partita.getDimensioneCampo();
+          //output.println("INS 2");  //command to the client to insert the two-pieces boat 
+            String[] c = input.nextLine().split(" "); //declaration of a new variable that was initialized with coordinates and direction of the boat 
+            System.out.println(Arrays.toString(c)); //print in terminal the array like a string
+            int x = Integer.parseInt(c[0])%partita.getDimensioneCampo(); //declaration of a new variable x for coordinateX that was initialized with the value in c[0] modulation with the dimensions of the player's court
+            int y = Integer.parseInt(c[0])/partita.getDimensioneCampo();  //declaration of a new variable x for coordinateX that was initialized with the value in c[0] divided by the dimensions of the player's court
             //AGGIUNGERE CONTROLLI
-            if(controllaNave(x, y, c[1].charAt(0), len)) //x,y,direzione,lunghezza
+            if(controllaNave(x, y, c[1].charAt(0), len)) //check if the method controlloNave returns true //x,y,direzione,lunghezza
             {
-                output.println("OK");
-                for(Nave n : navi)
+                output.println("OK"); //print in output a new line 'OK'
+                for(Nave n : navi) 
                 {
                     for(Pezzo p : n.pezzi)
                     {
