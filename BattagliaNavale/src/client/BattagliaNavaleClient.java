@@ -97,10 +97,10 @@ public class BattagliaNavaleClient implements MouseListener
     {
         System.out.println("Dir: '" + dir + "'");
         output.println(x + " " + y + " " + dir);
-        String status = input.nextLine();
-        System.out.println("Status: " + status);
+        String statuscode = input.nextLine();
+        System.out.println("Status: " + statuscode);
         
-        if(status.equals("OK"))
+        if(statuscode.equals("OK"))
         {
             while(input.hasNextLine())
             {
@@ -109,7 +109,7 @@ public class BattagliaNavaleClient implements MouseListener
                 if(comm.equals("END"))
                 {
                     this.status = input.nextLine();
-                    System.out.println(status);
+                    System.out.println(statuscode);
                     messageLabel.setText(input.nextLine());
                     break;
                 }
@@ -118,9 +118,9 @@ public class BattagliaNavaleClient implements MouseListener
                 board[i][j].setBackground(Color.red);
             }
         }
-        else if (status.startsWith("ERR"))
+        else if (statuscode.startsWith("ERR"))
         {
-            switch(status.split(" ")[1])    //Error code
+            switch(statuscode.split(" ")[1])    //Error code
             {
                 default:
                     this.status = input.nextLine();

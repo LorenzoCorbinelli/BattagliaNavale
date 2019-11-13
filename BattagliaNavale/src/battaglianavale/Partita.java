@@ -6,7 +6,6 @@ import java.util.concurrent.Executors;
 
 public class Partita
 {
-    private int mat[][]; //declaration of new matrix variable 
     private int dimensione; //declaration of new variable for the dimensions of the player's court
     public Player currentPlayer; //declaration of new Player variable that can identify the current player
     
@@ -20,26 +19,6 @@ public class Partita
     {
         this.dimensione=dimensioneGriglia; //parameter dimensions assigned to local variable dimensione
         this.start(); //call the start() method
-    }
-    
-    private boolean controllo(int i, int j) //obsolete method //method controllo with parameters (coordinates x and y)
-    {
-        //controllo angoli
-        if(i==0 && j==0)    //controllare i++ e j++
-        {
-            
-        }else if(i==0 && j==(dimensione-1)) 
-        {
-            //controllo i++ e j--
-        }else if(i==(dimensione-1)&& j==0)
-        {
-            //controllo i-- e j++
-        }else if(i==(dimensione-1)&& j==(dimensione-1))
-        {
-            //controllo j-- e i--
-        }
-        //controllo lati
-     return false;   
     }
 
     private void start() //method start 
