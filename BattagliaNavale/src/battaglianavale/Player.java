@@ -82,6 +82,8 @@ public class Player implements Runnable
            if(inserisciNave(3))
               i++; 
         }
+        
+        //TODO: METTERE DO WHILE
         output.println("Inserisci la nave da 4");
         while(!inserisciNave(4))
         {
@@ -174,7 +176,7 @@ public class Player implements Runnable
                     {
                         for(int j = c.y - 1; j <= c.y + 1; j++)
                         {
-                            if(p.x == i || p.y == j)
+                            if(p.x == i && p.y == j)
                                 return false;   //TO BE TESTED
                         }
                     }

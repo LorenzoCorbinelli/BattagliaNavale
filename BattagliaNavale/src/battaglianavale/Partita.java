@@ -12,15 +12,7 @@ public class Partita
     
     public Partita() //obsolete constructor 
     {
-        this.mat=new int[][]{
-        {0,0,1,1,0},
-        {1,0,0,0,0},
-        {1,0,0,0,1},
-        {1,0,1,0,0},
-        {0,0,1,0,0}
-        }; //new istance of matrix, with parameters
-        this.dimensione=5; //new value assigned to dimensione's variable
-        
+        this.dimensione=21; //new value assigned to dimensione's variable
         this.start(); //call the start() method
     }
     

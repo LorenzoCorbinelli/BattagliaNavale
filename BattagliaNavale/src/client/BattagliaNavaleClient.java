@@ -48,7 +48,7 @@ public class BattagliaNavaleClient implements MouseListener
        frame.setPreferredSize(new Dimension(505, 487));
        
        frame.setVisible(true);
-      // frame.setResizable(false);
+        // frame.setResizable(false);
        frame.pack();
         //aggiungere controllo sui partecipanti
         
