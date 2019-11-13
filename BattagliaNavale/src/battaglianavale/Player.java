@@ -17,12 +17,12 @@ import java.util.Scanner;
  */
 public class Player implements Runnable 
 { 
-    Player avversario;
-    Socket socket;
-    Scanner input;
-    PrintWriter output;
-    Partita partita;
-    ArrayList<Nave> navi;
+    Player avversario; //delcaration of new Player's variable
+    Socket socket; //delcaration of new Socket's variable
+    Scanner input; //delcaration of new Scanner's variable
+    PrintWriter output; //delcaration of new PrintWriter's variable
+    Partita partita; //delcaration of new Partita's variable
+    ArrayList<Nave> navi; //delcaration of new ArrayList's variable
     
     public Player(Socket s, Partita p)
     {
