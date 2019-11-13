@@ -54,6 +54,7 @@ public class Player implements Runnable
         if(partita.currentPlayer == null)
         {
             partita.currentPlayer = this;
+            
         }
         else
         {
@@ -64,18 +65,34 @@ public class Player implements Runnable
 
     private void inserisciNavi()
     {
-        int i = 0;
+        int i = 0;  //quantità navi
+        
         while (i < 3)
         {
-            //output.println("INS 2");  //comando al client per inserire navi di lunghezza 2
+          if(inserisciNave(2))
+              i++;
+        }
+        i=0;
+        while (i < 2)
+        {
+           if(inserisciNave(3))
+              i++; 
+        }
+        while(!inserisciNave(4)){}
+        while(!inserisciNave(5)){}
+        output.println("Attendi che un altro giocatore si connetta");
+    }
+    
+    private boolean inserisciNave(int len)
+    {
+          //output.println("INS 2");  //comando al client per inserire navi di lunghezza 2
             String[] c = input.nextLine().split(" ");    //coordinate e direzione ricevute dal client
             System.out.println(Arrays.toString(c));
             int x = Integer.parseInt(c[0])%partita.getDimensioneCampo();
             int y = Integer.parseInt(c[0])/partita.getDimensioneCampo();
             //AGGIUNGERE CONTROLLI
-            if(inserisciNave(x, y, c[1].charAt(0), 2)) //x,y,direzione,lunghezza
+            if(controllaNave(x, y, c[1].charAt(0), len)) //x,y,direzione,lunghezza
             {
-                i++;
                 output.println("OK");
                 for(Nave n : navi)
                 {
@@ -84,15 +101,16 @@ public class Player implements Runnable
                         output.println("PIE " + (partita.getDimensioneCampo() * p.y) + p.x);
                     }
                 }
+                return true;
             }
             else
             {
                 output.println("ERR 0");
             }
-        }
+        return false;
     }
     
-    private boolean inserisciNave(int x, int y, char dir, int l)
+    private boolean controllaNave(int x, int y, char dir, int l)
     {
         if( x < 0 || y < 0)
             return false;   //Out of Bounds, return

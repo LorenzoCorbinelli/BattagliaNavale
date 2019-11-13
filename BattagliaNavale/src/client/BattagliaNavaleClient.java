@@ -43,7 +43,7 @@ public class BattagliaNavaleClient implements MouseListener
        dim=Integer.parseInt(input.nextLine());  //ricevo dimensione dal server
        frame = new JFrame("Battaglia Navale");
        board = new Square[dim*dim];
-       messageLabel= new JLabel("...");
+       messageLabel= new JLabel(input.nextLine());
        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
        frame.setPreferredSize(new Dimension(505, 487));
        
