@@ -43,7 +43,7 @@ public class BattagliaNavaleClient implements MouseListener
        dim=Integer.parseInt(input.nextLine());  //ricevo dimensione dal server
        frame = new JFrame("Battaglia Navale");
        board = new Square[dim*dim];
-       messageLabel= new JLabel(input.nextLine());
+       messageLabel= new JLabel();
        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
        frame.setPreferredSize(new Dimension(505, 487));
        
@@ -88,9 +88,11 @@ public class BattagliaNavaleClient implements MouseListener
 
     void insert(int pos)
     {
+        messageLabel.setText(input.nextLine());
         output.println(pos + " n");
         String status = input.nextLine();
         System.out.println(status);
+        
         if(status.equals("OK"))
         {
             while(input.hasNextLine())

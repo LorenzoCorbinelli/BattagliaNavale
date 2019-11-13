@@ -69,18 +69,29 @@ public class Player implements Runnable
         
         while (i < 3)
         {
+          output.println("Inserisci la "+(i++)+"° nave da 2");
           if(inserisciNave(2))
               i++;
         }
         i=0;
         while (i < 2)
         {
+           output.println("Inserisci la "+(i++)+"° nave da 3");
            if(inserisciNave(3))
               i++; 
         }
-        while(!inserisciNave(4)){}
-        while(!inserisciNave(5)){}
-        output.println("Attendi che un altro giocatore si connetta");
+        output.println("Inserisci la nave da 4");
+        while(!inserisciNave(4))
+        {
+            output.println("Inserisci la nave da 4");
+        }
+        output.println("Inserisci la nave da 5");
+        while(!inserisciNave(5))
+        {
+            output.println("Inserisci la nave da 5");
+        }
+        if(this.avversario==null)
+            output.println("Attendi che un altro giocatore si connetta...");
     }
     
     private boolean inserisciNave(int len)
