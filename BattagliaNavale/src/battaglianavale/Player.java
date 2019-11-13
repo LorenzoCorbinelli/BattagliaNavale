@@ -24,50 +24,50 @@ public class Player implements Runnable
     Partita partita; //delcaration of new Partita's variable
     ArrayList<Nave> navi; //delcaration of new ArrayList's variable
     
-    public Player(Socket s, Partita p)
+    public Player(Socket s, Partita p) //constructor with parameters (a socket and a Partita)
     {
-        this.socket = s;
-        this.partita = p;
-        this.navi = new ArrayList<>();
+        this.socket = s; //variable s assigned to local variable socket
+        this.partita = p; //variable p assigned to local variable partita
+        this.navi = new ArrayList<>();  //new instance of ArrayList assigned to local variable navi
     }
     
     @Override
-    public void run() 
+    public void run() //run's method
     {
-        Setup();
-        inserisciNavi();
+        Setup(); //call the setup's method
+        inserisciNavi(); //call the inserisciNavi's method
     }
     
-    private void Setup()
+    private void Setup() //Setup's method
     {
         try
         {
-            input = new Scanner(socket.getInputStream());
-            output = new PrintWriter(socket.getOutputStream(), true);
-            output.println(partita.getDimensioneCampo());
+            input = new Scanner(socket.getInputStream()); //new instance of Scanner was assigned to local variable input
+            output = new PrintWriter(socket.getOutputStream(), true); //new instance ofPrintWriter was assigned to local variable output
+            output.println(partita.getDimensioneCampo()); //print a new line in output with the dimensions of the player's court
         }
         catch(Exception E)
         {
             return;
         }
         
-        if(partita.currentPlayer == null)
+        if(partita.currentPlayer == null) //check if the local variable currentPlayer was null
         {
-            partita.currentPlayer = this;
+            partita.currentPlayer = this; //this object was assigned to local variable currentPlayer
             
         }
-        else
+        else //if the local variable currentPlayer wasn't null
         {
-            partita.currentPlayer.avversario = this;
-            this.avversario = partita.currentPlayer;
+            partita.currentPlayer.avversario = this; //this object was assigned to other variable currentPlayer like avversario
+            this.avversario = partita.currentPlayer; //other object was assigned to local variable currentPlayer like avversario
         }
     }
 
-    private void inserisciNavi()
+    private void inserisciNavi() //inserisciNavi's method
     {
-        int i = 0;  //quantità navi
+        int i = 0;  //declaration of an integer variable with a fixed value (0)
         
-        while (i < 3)
+        while (i < 3) //here start a cycle that will continue until i is less than 3
         {
           output.println("Inserisci la "+(i+1)+"° nave da 2");
           if(inserisciNave(2))
