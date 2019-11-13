@@ -54,7 +54,7 @@ public class Partita
     {
         try (ServerSocket listener = new ServerSocket(50900)) //try to connect server with client at the port '50900' 
         {
-            System.out.println("Server is Running..."); //print that string (Server is running...)
+            System.out.println("Server is Running... v0.2"); //print that string (Server is running...)
             ExecutorService pool = Executors.newFixedThreadPool(200); //declarationof new ExecutorService's pool with a dimension (200)
             while(true) //FOR TESTING PURPOSES
                 pool.execute(new Player(listener.accept(), this)); //?????????

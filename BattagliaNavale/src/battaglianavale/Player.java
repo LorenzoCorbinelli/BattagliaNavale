@@ -69,14 +69,16 @@ public class Player implements Runnable
         
         while (i < 3)
         {
-          output.println("Inserisci la "+(i++)+"° nave da 2");
+          output.println("Inserisci la "+(i+1)+"° nave da 2");
           if(inserisciNave(2))
+          {
               i++;
+          }
         }
         i=0;
         while (i < 2)
         {
-           output.println("Inserisci la "+(i++)+"° nave da 3");
+           output.println("Inserisci la "+(i+1)+"° nave da 3");
            if(inserisciNave(3))
               i++; 
         }
@@ -112,6 +114,7 @@ public class Player implements Runnable
                         output.println("PIE " + ((partita.getDimensioneCampo() * p.y) + p.x));
                     }
                 }
+                output.println("END");
                 return true;
             }
             else

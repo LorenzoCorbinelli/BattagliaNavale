@@ -83,15 +83,15 @@ public class BattagliaNavaleClient implements MouseListener
        boardPanel.setSize(505,497);
        frame.add(boardPanel);
        frame.pack();
+       messageLabel.setText(input.nextLine());
     }
     
 
     void insert(int pos)
     {
-        messageLabel.setText(input.nextLine());
         output.println(pos + " n");
         String status = input.nextLine();
-        System.out.println(status);
+        System.out.println("Status: " + status);
         
         if(status.equals("OK"))
         {
@@ -99,6 +99,11 @@ public class BattagliaNavaleClient implements MouseListener
             {
                 String comm = input.nextLine();
                 System.out.println(comm);
+                if(comm.equals("END"))
+                {
+                    messageLabel.setText(input.nextLine());
+                    break;
+                }
                 int coords = Integer.parseInt(comm.split(" ")[1]);
                 board[coords].setBackground(Color.red);
             }
@@ -107,7 +112,8 @@ public class BattagliaNavaleClient implements MouseListener
         {
             switch(status.split(" ")[1])    //Error code
             {
-                
+                default:
+                    messageLabel.setText(input.nextLine());
             }
         }
     }
