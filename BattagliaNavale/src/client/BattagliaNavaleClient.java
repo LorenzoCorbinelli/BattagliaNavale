@@ -6,11 +6,6 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.PrintWriter;
-import java.net.Socket;
-import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -25,49 +20,37 @@ public class BattagliaNavaleClient implements MouseListener
     private Square[][] board;
     private Square currentSquare;
     private String status;
-    private int dim;
-    private Socket socket;
-    private Scanner input;
-    private PrintWriter output;   
-    
-    public BattagliaNavaleClient(String serverAddress) throws Exception 
+
+    public void setStatus(String status)
     {
-        socket = new Socket(serverAddress, 50900);
-        input = new Scanner(socket.getInputStream());
-        output = new PrintWriter(socket.getOutputStream(), true); 
-        dim=Integer.parseInt(input.nextLine());  //ricevo dimensione dal server
+        this.status = status;
+    }
+    private int dim;
+    private messageListener listener;
+    
+    public BattagliaNavaleClient(String serverAddress)
+    {
         frame = new JFrame("Battaglia Navale");
-        board = new Square[dim][dim];
-        messageLabel= new JLabel();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setPreferredSize(new Dimension(505, 487));
-       
         frame.setVisible(true);
-        // frame.setResizable(false);
+        frame.setResizable(false);
         frame.pack();
-        //aggiungere controllo sui partecipanti
         
-        //permettere inserimento navi
-        
-        //controllo che tutti abbiano inserito tutte le navi disponibili
-        
-        //inizio gioco
-        
-        //giocata
-        
-            //colpito o acqua?
-            
-            //punteggio
-            
-            //partita finita?
-            
-        //attendogiocata avversario
-       
+        messageLabel = new JLabel();
         messageLabel.setBackground(Color.lightGray);
         frame.getContentPane().add(messageLabel, BorderLayout.SOUTH);
-
+        frame.pack();
+        
+        listener = new messageListener(serverAddress, this);
+    }
+    
+    public void setup(int dim)
+    {
+        this.dim = dim;
         JPanel boardPanel = new JPanel();
-        boardPanel.setBackground(Color.black);
+        board = new Square[dim][dim];
+        messageLabel= new JLabel();
         boardPanel.setLayout(new GridLayout(dim, dim,0,0));
         for (int j = 0; j < board.length; j++)
         {
@@ -80,36 +63,38 @@ public class BattagliaNavaleClient implements MouseListener
                 boardPanel.add(board[i][j]);
             }
         }
+        
+        boardPanel.setBackground(Color.black);
         boardPanel.setSize(505,497);
         frame.add(boardPanel);
         frame.pack();
-        status = input.nextLine();
-        messageLabel.setText(input.nextLine());
     }
 
     @Override
     public void mouseClicked(MouseEvent e)
     {
-        //Check status
-        if(currentSquare == null)
+        if(status.startsWith("INS"))
         {
-            ((Square)e.getSource()).setBackground(Color.blue);
-            currentSquare = (Square)e.getSource();
-        }
-        else
-        {
-            mouseExited(e);
-            if(currentSquare.equals(e.getSource()))
+            if(currentSquare == null)
             {
-                currentSquare = null;
-                return;
+                ((Square)e.getSource()).setBackground(Color.blue);
+                currentSquare = (Square)e.getSource();
             }
-            int[] s1 = findSquare(currentSquare);
-            int[] s2 = findSquare((Square)e.getSource());
-            
-            currentSquare = null;
-            
-            insert(s1[0], s1[1], calcDir(s1, s2));
+            else
+            {
+                mouseExited(e);
+                if(currentSquare.equals(e.getSource()))
+                {
+                    currentSquare = null;
+                    return;
+                }
+                int[] s1 = findSquare(currentSquare);
+                int[] s2 = findSquare((Square)e.getSource());
+
+                currentSquare = null;
+
+                insert(s1[0], s1[1], calcDir(s1, s2));
+            }
         }
     }
 
@@ -128,48 +113,51 @@ public class BattagliaNavaleClient implements MouseListener
     @Override
     public void mouseEntered(MouseEvent e)  //TODO: Mancano controlli
     {
-        if(currentSquare == null)
-            ((Square)e.getSource()).setBackground(Color.green);
-        else
+        if(status.startsWith("INS"))
         {
-            int[] s1 = findSquare(currentSquare);
-            int[] s2 = findSquare((Square)e.getSource());
-            int len = Integer.parseInt(this.status.split(" ")[1]);
-            char dir = calcDir(s1, s2);
-            if(isInBounds(s1[0], s1[1], dir, len) && isPositionValid(s1[0], s1[1], dir, len))
-            {
-                ((Square)e.getSource()).setBackground(Color.blue);
-                switch(dir)
-                {
-                    case 'n':
-                        for(int i = 0; i < len; i++)
-                        {
-                            board[s1[0]][s1[1]-i].setBackground(Color.red);
-                        }
-                    break;
-                    case 'w':
-                        for(int i = 0; i < len; i++)
-                        {
-                            board[s1[0]-i][s1[1]].setBackground(Color.red);
-                        }
-                    break;
-                    case 's':
-                        for(int i = 0; i < len; i++)
-                        {
-                            board[s1[0]][s1[1]+i].setBackground(Color.red);
-                        }
-                    break;
-                    case 'e':
-                        for(int i = 0; i < len; i++)
-                        {
-                            board[s1[0]+i][s1[1]].setBackground(Color.red);
-                        }
-                    break;
-                }
-            }
+            if(currentSquare == null)
+                ((Square)e.getSource()).setBackground(Color.green);
             else
             {
-                ((Square)e.getSource()).setBackground(Color.yellow);
+                int[] s1 = findSquare(currentSquare);
+                int[] s2 = findSquare((Square)e.getSource());
+                int len = Integer.parseInt(this.status.split(" ")[1]);
+                char dir = calcDir(s1, s2);
+                if(isInBounds(s1[0], s1[1], dir, len) && isPositionValid(s1[0], s1[1], dir, len))
+                {
+                    ((Square)e.getSource()).setBackground(Color.blue);
+                    switch(dir)
+                    {
+                        case 'n':
+                            for(int i = 0; i < len; i++)
+                            {
+                                board[s1[0]][s1[1]-i].setBackground(Color.red);
+                            }
+                        break;
+                        case 'w':
+                            for(int i = 0; i < len; i++)
+                            {
+                                board[s1[0]-i][s1[1]].setBackground(Color.red);
+                            }
+                        break;
+                        case 's':
+                            for(int i = 0; i < len; i++)
+                            {
+                                board[s1[0]][s1[1]+i].setBackground(Color.red);
+                            }
+                        break;
+                        case 'e':
+                            for(int i = 0; i < len; i++)
+                            {
+                                board[s1[0]+i][s1[1]].setBackground(Color.red);
+                            }
+                        break;
+                    }
+                }
+                else
+                {
+                    ((Square)e.getSource()).setBackground(Color.yellow);
+                }
             }
         }
     }
@@ -177,45 +165,48 @@ public class BattagliaNavaleClient implements MouseListener
     @Override
     public void mouseExited(MouseEvent e)   //TODO: Mancano controlli
     {
-        ((Square)e.getSource()).resetColor();
-        if(currentSquare != null)
+        if(status.startsWith("INS"))
         {
-            int[] s1 = findSquare(currentSquare);
-            int[] s2 = findSquare((Square)e.getSource());
-            int len = Integer.parseInt(status.split(" ")[1]);
-            try
+            ((Square)e.getSource()).resetColor();
+            if(currentSquare != null)
             {
-                switch(calcDir(s1, s2))
+                int[] s1 = findSquare(currentSquare);
+                int[] s2 = findSquare((Square)e.getSource());
+                int len = Integer.parseInt(status.split(" ")[1]);
+                try
                 {
-                    case 'n':
-                        for(int i = 0; i < len; i++)
-                        {
-                            board[s1[0]][s1[1]-i].resetColor();
-                        }
-                    break;
-                    case 'w':
-                        for(int i = 0; i < len; i++)
-                        {
-                            board[s1[0]-i][s1[1]].resetColor();
-                        }
-                    break;
-                    case 's':
-                        for(int i = 0; i < len; i++)
-                        {
-                            board[s1[0]][s1[1]+i].resetColor();
-                        }
-                    break;
-                    case 'e':
-                        for(int i = 0; i < len; i++)
-                        {
-                            board[s1[0]+i][s1[1]].resetColor();
-                        }
-                    break;
+                    switch(calcDir(s1, s2))
+                    {
+                        case 'n':
+                            for(int i = 0; i < len; i++)
+                            {
+                                board[s1[0]][s1[1]-i].resetColor();
+                            }
+                        break;
+                        case 'w':
+                            for(int i = 0; i < len; i++)
+                            {
+                                board[s1[0]-i][s1[1]].resetColor();
+                            }
+                        break;
+                        case 's':
+                            for(int i = 0; i < len; i++)
+                            {
+                                board[s1[0]][s1[1]+i].resetColor();
+                            }
+                        break;
+                        case 'e':
+                            for(int i = 0; i < len; i++)
+                            {
+                                board[s1[0]+i][s1[1]].resetColor();
+                            }
+                        break;
+                    }
                 }
-            }
-            catch(ArrayIndexOutOfBoundsException ex)
-            {
-                System.out.println("Magari dovresti aggiungere i controlli invece che affidarti al try...");
+                catch(ArrayIndexOutOfBoundsException ex)
+                {
+                    System.out.println("Perhaps you should add proper controls instead of relying on a try-catch..."); //I mean, it works, but it's hella ugly
+                }
             }
         }
     }
@@ -263,39 +254,7 @@ public class BattagliaNavaleClient implements MouseListener
     
     void insert(int x, int y, char dir)
     {
-        System.out.println("Dir: '" + dir + "'");
-        output.println(x + " " + y + " " + dir);
-        String statuscode = input.nextLine();
-        System.out.println("Status: " + statuscode);
-        
-        if(statuscode.equals("OK"))
-        {
-            while(input.hasNextLine())
-            {
-                String comm = input.nextLine();
-                System.out.println(comm);
-                if(comm.equals("END"))
-                {
-                    this.status = input.nextLine();
-                    System.out.println(statuscode);
-                    messageLabel.setText(input.nextLine());
-                    break;
-                }
-                int i = Integer.parseInt(comm.split(" ")[1]);
-                int j = Integer.parseInt(comm.split(" ")[2]);
-                board[i][j].setColor(Color.red);
-                board[i][j].setBackground(Color.red);
-            }
-        }
-        else if (statuscode.startsWith("ERR"))
-        {
-            switch(statuscode.split(" ")[1])    //Error code
-            {
-                default:
-                    this.status = input.nextLine();
-                    messageLabel.setText(input.nextLine());
-            }
-        }
+        listener.send("" + x + y + dir);
     }
     
     boolean isInBounds(int x, int y, char dir, int l)
@@ -335,48 +294,54 @@ public class BattagliaNavaleClient implements MouseListener
 
     private boolean isPositionValid(int x, int y, char dir, int len)
     {
-        switch(dir)
+        try
         {
-            case 'n':
-                for(int i = x - 1; i <= x+1; i++)
-                {
-                    for(int j = y + 1; j >= y - len; j--)
+            switch(dir)
+            {
+                case 'n':
+                    for(int i = x - 1; i <= x+1; i++)
                     {
-                        if(board[i][j].getBackground().equals(Color.red))
-                            return false;
+                        for(int j = y + 1; j >= y - len; j--)
+                        {
+                            if(board[i][j].getBackground().equals(Color.red))
+                                return false;
+                        }
                     }
-                }
-                break;
-            case 'w':
-                for(int i = x + 1; i >= x - len; i--)
-                {
-                    for(int j = y - 1; j <= y + 1; j++)
+                    break;
+                case 'w':
+                    for(int i = x + 1; i >= x - len; i--)
                     {
-                        if(board[i][j].getBackground().equals(Color.red))
-                            return false;
+                        for(int j = y - 1; j <= y + 1; j++)
+                        {
+                            if(board[i][j].getBackground().equals(Color.red))
+                                return false;
+                        }
                     }
-                }
-                break;
-            case 's':
-                for(int i = x - 1; i <= x+1; i++)
-                {
-                    for(int j = y - 1; j <= y + len; j++)
+                    break;
+                case 's':
+                    for(int i = x - 1; i <= x+1; i++)
                     {
-                        if(board[i][j].getBackground().equals(Color.red))
-                            return false;
+                        for(int j = y - 1; j <= y + len; j++)
+                        {
+                            if(board[i][j].getBackground().equals(Color.red))
+                                return false;
+                        }
                     }
-                }
-                break;
-            case 'e':
-                for(int i = x - 1; i <= x + len; i++)
-                {
-                    for(int j = y - 1; j <= y + 1; j++)
+                    break;
+                case 'e':
+                    for(int i = x - 1; i <= x + len; i++)
                     {
-                        if(board[i][j].getBackground().equals(Color.red))
-                            return false;
+                        for(int j = y - 1; j <= y + 1; j++)
+                        {
+                            if(board[i][j].getBackground().equals(Color.red))
+                                return false;
+                        }
                     }
-                }
-                break;
+                    break;
+            }
+        } catch (ArrayIndexOutOfBoundsException ex)
+        {
+                System.out.println("Perhaps you should add proper controls instead of relying on a try-catch..."); //It doesn't even work properly :(
         }
         return true;
     }
