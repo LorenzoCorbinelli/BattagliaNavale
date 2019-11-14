@@ -1,4 +1,4 @@
-package battaglianavale;
+package server;
 
 import java.net.ServerSocket;
 import java.util.concurrent.ExecutorService;

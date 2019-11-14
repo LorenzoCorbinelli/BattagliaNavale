@@ -1,4 +1,4 @@
-package battaglianavale;
+package server;
 
 public class Pezzo
 {

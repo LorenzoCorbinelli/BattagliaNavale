@@ -1,14 +1,6 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package client;
 
 import java.awt.Color;
-import java.awt.Font;
-import java.awt.GridBagLayout;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 /**
@@ -17,19 +9,21 @@ import javax.swing.JPanel;
  */
 class Square extends JPanel
 {
-    JLabel label = new JLabel();
-
+    private Color color;
+    
     public Square() 
     {
+        color = Color.white;
         setBackground(Color.white);
-        setLayout(new GridBagLayout());
-        label.setFont(new Font("Arial", Font.BOLD, 40));
-        add(label);
     }
-
-    public void setText(char text) 
+    
+    public void resetColor()
     {
-        label.setForeground(text == 'X' ? Color.RED : Color.BLUE); //ricontrollare
-        label.setText(text + "");
+        setBackground(color);
+    }
+    
+    public void setColor(Color c)
+    {
+        this.color = c;
     }
 }
