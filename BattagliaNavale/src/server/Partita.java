@@ -6,7 +6,7 @@ import java.util.concurrent.Executors;
 
 public class Partita
 {
-    private int dimensione; //declaration of new variable for the dimensions of the player's court
+    private final int dimensione; //declaration of new variable for the dimensions of the player's court
     public Player currentPlayer; //declaration of new Player variable that can identify the current player
     
     public Partita() //obsolete constructor 

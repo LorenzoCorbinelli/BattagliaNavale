@@ -18,11 +18,11 @@ import java.util.Scanner;
 public class Player implements Runnable 
 { 
     public Player avversario; //delcaration of new Player's variable
-    private Socket socket; //delcaration of new Socket's variable
+    private final Socket socket; //delcaration of new Socket's variable
     private Scanner input; //delcaration of new Scanner's variable
     private PrintWriter output; //delcaration of new PrintWriter's variable
     public Partita partita; //delcaration of new Partita's variable
-    private ArrayList<Nave> navi; //delcaration of new ArrayList's variable
+    private final ArrayList<Nave> navi; //delcaration of new ArrayList's variable
     public boolean waiting = false;
     
     public Player(Socket s, Partita p) //constructor with parameters (a socket and a Partita)
@@ -63,7 +63,7 @@ public class Player implements Runnable
             this.avversario = partita.currentPlayer; //other object was assigned to local variable currentPlayer like avversario
             if(avversario.waiting)
             {
-                
+                avversario.output.println("MSG Attendi che l'altro giocatore finisca di piazzare le navi..."); 
             }
         }
     }
@@ -74,7 +74,7 @@ public class Player implements Runnable
         
         while (i < 3) //here start a cycle that will continue until i is less than 3
         {
-            output.println("INS 2");
+            output.println("STA INS 2");
             output.println("MSG Inserisci la "+(i+1)+"° nave da 2"); //print a new line in output that specify to the player that he/she have to insert the boat
             if(inserisciNave(2)) //check if inserisciNave was successful
             {
@@ -84,44 +84,44 @@ public class Player implements Runnable
         i=0; //reset the fixed value
         while (i < 2) //here start a cycle that will continue until i is less than 2
         {
-            output.println("INS 3");
+            output.println("STA INS 3");
             output.println("MSG Inserisci la "+(i+1)+"° nave da 3"); //print a new line in output that specify to the player that he/she have to insert the boat
             if(inserisciNave(3)) //check if inserisciNave was successful
                 i++; //increment a local variable i
         }
         do
         {
-            output.println("INS 4");
-            output.println("MSG Inserisci la nave da 4"); //print a new line in output that specify to the player that he/she have to insert the boat
+            output.println("STA INS 4");
+            output.println("MSG Inserisci la nave da 4");
         }while(!inserisciNave(4)); //check if inserisciNave wasn't successful
         
         do
         {
-            output.println("INS 5");
+            output.println("STA INS 5");
             output.println("MSG Inserisci la nave da 5"); //print a new line in output that specify to the player that he/she have to insert the boat
         }while(!inserisciNave(5)); //check if inserisciNave wasn't successful
         
         if(this.avversario==null) //check if there isn't another player connectto the server
         {   
-            output.println("WAT");
+            output.println("STA WAT");
             output.println("MSG Attendi che un altro giocatore si connetta..."); //print a new line in output taht specify that theclient havn't an opponent
             waiting = true;
         }
         else if(!avversario.waiting)
         {
-            output.println("WAT");
+            output.println("STA WAT");
             output.println("MSG Attendi che l'altro giocatore finisca di piazzare le navi..."); //print a new line in output taht specify that theclient havn't an opponent
             waiting = true;
         }
         else if(avversario.waiting)
         {
-            output.println("WAT");
+            output.println("STA WAT");
             output.println("MSG Turno dell'avversario"); //print a new line in output taht specify that theclient havn't an opponent
             avversario.attacca();
         }
         else
         {
-            attacca();
+            attacca(); //Will this ever be called?
         }
     }
     
@@ -134,20 +134,18 @@ public class Player implements Runnable
             //AGGIUNGERE CONTROLLI
             if(controllaNave(x, y, c[2].charAt(0), len)) //check if the method controlloNave returns true //x,y,direzione,lunghezza
             {
-                output.println("PIE"); //print in output a new line 'PIE'
                 for(Nave n : navi) 
                 {
                     for(Pezzo p : n.pezzi)
                     {
-                        output.println(p.x + ' ' + p.y);
+                        output.println("PIE " + p.x + ' ' + p.y);
                     }
                 }
-                output.println("END");
                 return true;
             }
             else
             {
-                output.println("ERR 0");
+                output.println("ERR Posizione non valida");
             }
         return false;
     }
@@ -214,8 +212,10 @@ public class Player implements Runnable
         return true;
     }
 
-    private void attacca() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    private void attacca()
+    {
+            output.println("STA ATT");
+            output.println("MSG È il tuo turno");
     }
     
 }
