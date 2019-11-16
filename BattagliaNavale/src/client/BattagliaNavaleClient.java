@@ -79,6 +79,9 @@ public class BattagliaNavaleClient implements MouseListener, MouseMotionListener
         yourBoardPanel.setLayout(new GridLayout(dim, dim,0,0));
         opponentBoardPanel.setLayout(new GridLayout(dim, dim,0,0));
         Border border = BorderFactory.createMatteBorder(1, 1, 0, 0, Color.black);
+        Border bottomBorder = BorderFactory.createMatteBorder(1, 1, 1, 0, Color.black);
+        Border rightBorder = BorderFactory.createMatteBorder(1, 1, 0, 1, Color.black);
+        Border cornerBorder = BorderFactory.createMatteBorder(1, 1, 1, 1, Color.black);
         face = new JLabel("(·‿·)", JLabel.CENTER);
         for (int j = 0; j < dim; j++)
         {
@@ -87,13 +90,31 @@ public class BattagliaNavaleClient implements MouseListener, MouseMotionListener
                 yourBoard[i][j] = new Square();
                 yourBoard[i][j].addMouseListener(this);
                 yourBoard[i][j].addMouseMotionListener(this);
-                yourBoard[i][j].setBorder(border);
                 yourBoardPanel.add(yourBoard[i][j]);
                 opponentBoard[i][j] = new Square();
                 opponentBoard[i][j].addMouseListener(this);
                 opponentBoard[i][j].addMouseMotionListener(this);
-                opponentBoard[i][j].setBorder(border);
                 opponentBoardPanel.add(opponentBoard[i][j]);
+                if(i == dim - 1 && j == dim -1)
+                {
+                    yourBoard[i][j].setBorder(cornerBorder);
+                    opponentBoard[i][j].setBorder(cornerBorder);
+                }
+                else if(i == dim-1)
+                {
+                    yourBoard[i][j].setBorder(rightBorder);
+                    opponentBoard[i][j].setBorder(rightBorder);
+                }
+                else if(j == dim - 1)
+                {
+                    yourBoard[i][j].setBorder(bottomBorder);
+                    opponentBoard[i][j].setBorder(bottomBorder);
+                }
+                else
+                {
+                    yourBoard[i][j].setBorder(border);
+                    opponentBoard[i][j].setBorder(border);
+                }
             }
         }
         
