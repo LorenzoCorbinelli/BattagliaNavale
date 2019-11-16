@@ -5,6 +5,7 @@
  */
 package client;
 
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Arrays;
@@ -34,8 +35,8 @@ public class messageListener implements Runnable
         try
         {
             socket = new Socket(serverAddress, 50900);
-            input = new Scanner(socket.getInputStream());
-            output = new PrintWriter(socket.getOutputStream(), true); 
+            input = new Scanner(socket.getInputStream(), "UTF-8");
+            output = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), "UTF-8"), true); 
         } catch (Exception ex)
         {}
         

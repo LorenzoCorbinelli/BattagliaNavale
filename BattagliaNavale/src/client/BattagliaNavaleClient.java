@@ -55,7 +55,7 @@ public class BattagliaNavaleClient implements MouseListener, MouseMotionListener
         status = "WAT";
         frame = new JFrame("Battaglia Navale");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setPreferredSize(new Dimension(505*2, 487));
+        frame.setPreferredSize(new Dimension(1024, 490));
         frame.setVisible(true);
         frame.setResizable(false);
         frame.pack();
@@ -129,6 +129,8 @@ public class BattagliaNavaleClient implements MouseListener, MouseMotionListener
         messageLabel.setText("I'm blue da-ba-dee");
         frame.pack();
         frame.addMouseMotionListener(this);
+        System.out.println(yourBoardPanel.getHeight() + " ," + yourBoardPanel.getWidth());
+        System.out.println(yourBoard[1][1].getHeight() + " ," + yourBoard[1][1].getWidth());
     }
 
     @Override

@@ -5,6 +5,7 @@
  */
 package server;
 
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -43,8 +44,8 @@ public class Player implements Runnable
     {
         try
         {
-            input = new Scanner(socket.getInputStream()); //new instance of Scanner was assigned to local variable input
-            output = new PrintWriter(socket.getOutputStream(), true); //new instance ofPrintWriter was assigned to local variable output
+            input = new Scanner(socket.getInputStream(), "UTF-8"); //new instance of Scanner was assigned to local variable input
+            output = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), "UTF-8"), true); //new instance ofPrintWriter was assigned to local variable output
             output.println("DIM " + partita.getDimensioneCampo()); //print a new line in output with the dimensions of the player's court
         }
         catch(Exception E)
