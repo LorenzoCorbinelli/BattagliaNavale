@@ -81,17 +81,15 @@ public class messageListener implements Runnable
                 case "STA":
                     client.setStatus(reassCommand(command));
                     break;
-                case "GO":
+                case "HIT":
+                    client.drawHit(Integer.parseInt(command[1]), Integer.parseInt(command[2]));
                     break;
                 case "ERR":
                     client.setError(reassCommand(command));
-            {
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(messageListener.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
+                    try
+                    {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException ex) {}
                     break;
                 case "":
                     break;

@@ -164,6 +164,14 @@ public class BattagliaNavaleClient implements MouseListener, MouseMotionListener
                 }
             }
         }
+        else
+        {
+            //if(status.equals("ATT"))
+            {
+                int[] s1 = findSquare(source, opponentBoard);
+                attack(s1[0], s1[1]);
+            }
+        }
     }
 
     @Override
@@ -349,6 +357,12 @@ public class BattagliaNavaleClient implements MouseListener, MouseMotionListener
         listener.send(x + " " + y + " " + dir);
     }
     
+    void attack(int x, int y)
+    {
+        setStatus("WAT");
+        listener.send(x + " " + y + " ");
+    }
+    
     boolean isInBounds(int x, int y, char dir, int l)
     {
         switch (dir) {
@@ -460,6 +474,12 @@ public class BattagliaNavaleClient implements MouseListener, MouseMotionListener
     {
         yourBoard[x][y].setColor(Color.red);
         yourBoard[x][y].setBackground(Color.red);
+    }
+
+    void drawHit(int x, int y)
+    {
+        opponentBoard[x][y].setColor(Color.red);
+        opponentBoard[x][y].setBackground(Color.red);
     }
 
     void setError(String err)
