@@ -6,170 +6,249 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.PrintWriter;
-import java.net.Socket;
-import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.awt.event.MouseMotionListener;
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
 
-public class BattagliaNavaleClient implements MouseListener
+public class BattagliaNavaleClient implements MouseListener, MouseMotionListener
 {
-    private JFrame frame;
+    private final JFrame frame;
+    private JLabel face;
+    private JPanel yourBoardPanel;
+    private JPanel opponentBoardPanel;
     private JLabel messageLabel;
-    
-    private Square[][] board;
-    private Square currentSquare;
+    private Square[][] yourBoard;
+    private Square[][] opponentBoard;
+    private Square mouseOverSquare;
+    private Square selectedSquare;
     private String status;
     private int dim;
-    private Socket socket;
-    private Scanner input;
-    private PrintWriter output;   
-    
-    public BattagliaNavaleClient(String serverAddress) throws Exception 
-    {
-        socket = new Socket(serverAddress, 50900);
-        input = new Scanner(socket.getInputStream());
-        output = new PrintWriter(socket.getOutputStream(), true); 
-        dim=Integer.parseInt(input.nextLine());  //ricevo dimensione dal server
-        frame = new JFrame("Battaglia Navale");
-        board = new Square[dim][dim];
-        messageLabel= new JLabel();
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setPreferredSize(new Dimension(505, 487));
-       
-        frame.setVisible(true);
-        // frame.setResizable(false);
-        frame.pack();
-        //aggiungere controllo sui partecipanti
-        
-        //permettere inserimento navi
-        
-        //controllo che tutti abbiano inserito tutte le navi disponibili
-        
-        //inizio gioco
-        
-        //giocata
-        
-            //colpito o acqua?
-            
-            //punteggio
-            
-            //partita finita?
-            
-        //attendogiocata avversario
-       
-        messageLabel.setBackground(Color.lightGray);
-        frame.getContentPane().add(messageLabel, BorderLayout.SOUTH);
+    private final messageListener listener; //Using threads comes with HUGE problems, like race conditions. They shuoldn'y cause many problems in this application, thus they're not checked (yet)
 
-        JPanel boardPanel = new JPanel();
-        boardPanel.setBackground(Color.black);
-        boardPanel.setLayout(new GridLayout(dim, dim,0,0));
-        for (int j = 0; j < board.length; j++)
-        {
-            for (int i = 0; i < board.length; i++)
+    public void setStatus(String status)
+    {
+        this.status = status;
+        if(mouseOverSquare != null)
+        {    switch(status.substring(0,3))
             {
-                Border border = BorderFactory.createMatteBorder(1, 1, 0, 0, Color.black);
-                board[i][j] = new Square();
-                board[i][j].addMouseListener(this);
-                board[i][j].setBorder(border);
-                boardPanel.add(board[i][j]);
+                case "INS":
+                    mouseOverSquare.setBackground(Color.green);
+                    break;
+                case "WAT":
+                    mouseOverSquare.setBackground(Color.gray);
+                    break;
             }
         }
-        boardPanel.setSize(505,497);
-        frame.add(boardPanel);
+    }
+    
+    public void setText(String msg)
+    {
+        messageLabel.setText(msg);
+        messageLabel.setForeground(Color.black);
+    }
+    
+    public BattagliaNavaleClient(String serverAddress)
+    {
+        status = "WAT";
+        frame = new JFrame("Battaglia Navale");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setPreferredSize(new Dimension(1024, 490));
+        frame.setVisible(true);
+        frame.setResizable(false);
         frame.pack();
-        status = input.nextLine();
-        messageLabel.setText(input.nextLine());
+        
+        messageLabel = new JLabel();
+        messageLabel.setBackground(Color.lightGray);
+        frame.getContentPane().add(messageLabel, BorderLayout.SOUTH);
+        frame.pack();
+        
+        listener = new messageListener(serverAddress, this);
+    }
+    
+    public void setup(int dim)
+    {
+        this.dim = dim;
+        yourBoardPanel = new JPanel();
+        opponentBoardPanel = new JPanel();
+        yourBoard = new Square[dim][dim];
+        opponentBoard = new Square[dim][dim];
+        messageLabel= new JLabel();
+        yourBoardPanel.setLayout(new GridLayout(dim, dim,0,0));
+        opponentBoardPanel.setLayout(new GridLayout(dim, dim,0,0));
+        Border border = BorderFactory.createMatteBorder(1, 1, 0, 0, Color.black);
+        Border bottomBorder = BorderFactory.createMatteBorder(1, 1, 1, 0, Color.black);
+        Border rightBorder = BorderFactory.createMatteBorder(1, 1, 0, 1, Color.black);
+        Border cornerBorder = BorderFactory.createMatteBorder(1, 1, 1, 1, Color.black);
+        face = new JLabel("(·‿·)", JLabel.CENTER);
+        for (int j = 0; j < dim; j++)
+        {
+            for (int i = 0; i < dim; i++)
+            {
+                yourBoard[i][j] = new Square();
+                yourBoard[i][j].addMouseListener(this);
+                yourBoard[i][j].addMouseMotionListener(this);
+                yourBoardPanel.add(yourBoard[i][j]);
+                opponentBoard[i][j] = new Square();
+                opponentBoard[i][j].addMouseListener(this);
+                opponentBoard[i][j].addMouseMotionListener(this);
+                opponentBoardPanel.add(opponentBoard[i][j]);
+                if(i == dim - 1 && j == dim -1)
+                {
+                    yourBoard[i][j].setBorder(cornerBorder);
+                    opponentBoard[i][j].setBorder(cornerBorder);
+                }
+                else if(i == dim-1)
+                {
+                    yourBoard[i][j].setBorder(rightBorder);
+                    opponentBoard[i][j].setBorder(rightBorder);
+                }
+                else if(j == dim - 1)
+                {
+                    yourBoard[i][j].setBorder(bottomBorder);
+                    opponentBoard[i][j].setBorder(bottomBorder);
+                }
+                else
+                {
+                    yourBoard[i][j].setBorder(border);
+                    opponentBoard[i][j].setBorder(border);
+                }
+            }
+        }
+        
+        //boardPanel.setBackground(Color.lightGray);
+        yourBoardPanel.setPreferredSize(new Dimension(432,432));
+        opponentBoardPanel.setPreferredSize(new Dimension(432,432));
+        messageLabel.setBackground(Color.lightGray);
+        frame.getContentPane().add(messageLabel, BorderLayout.SOUTH);
+        frame.getContentPane().add(yourBoardPanel, BorderLayout.WEST);
+        frame.getContentPane().add(opponentBoardPanel, BorderLayout.EAST);
+        frame.getContentPane().add(face, BorderLayout.CENTER);
+        messageLabel.setText("I'm blue da-ba-dee");
+        frame.pack();
+        frame.addMouseMotionListener(this);
+        System.out.println(yourBoardPanel.getHeight() + " ," + yourBoardPanel.getWidth());
+        System.out.println(yourBoard[1][1].getHeight() + " ," + yourBoard[1][1].getWidth());
     }
 
     @Override
     public void mouseClicked(MouseEvent e)
     {
-        //Check status
-        if(currentSquare == null)
+        Square source = (Square)e.getSource();
+        
+        if(source.getParent().equals(yourBoardPanel))
         {
-            ((Square)e.getSource()).setBackground(Color.blue);
-            currentSquare = (Square)e.getSource();
+            if(status.startsWith("INS"))
+            {
+                if(selectedSquare == null)
+                {
+                    source.setBackground(Color.blue);
+                    selectedSquare = source;
+                }
+                else
+                {
+                    mouseExited(e);
+                    if(selectedSquare.equals(source))
+                    {
+                        selectedSquare = null;
+                        return;
+                    }
+                    int[] s1 = findSquare(selectedSquare, yourBoard);
+                    int[] s2 = findSquare(source, yourBoard);
+
+                    selectedSquare = null;
+
+                    insert(s1[0], s1[1], calcDir(s1, s2));
+                }
+            }
         }
         else
         {
-            mouseExited(e);
-            if(currentSquare.equals(e.getSource()))
+            //if(status.equals("ATT"))
             {
-                currentSquare = null;
-                return;
+                int[] s1 = findSquare(source, opponentBoard);
+                attack(s1[0], s1[1]);
             }
-            int[] s1 = findSquare(currentSquare);
-            int[] s2 = findSquare((Square)e.getSource());
-            
-            currentSquare = null;
-            
-            insert(s1[0], s1[1], calcDir(s1, s2));
         }
     }
 
     @Override
-    public void mousePressed(MouseEvent e)
-    {
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+    public void mousePressed(MouseEvent e){}    //unused
 
     @Override
-    public void mouseReleased(MouseEvent e)
-    {
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+    public void mouseReleased(MouseEvent e){}   //unused
 
     @Override
     public void mouseEntered(MouseEvent e)  //TODO: Mancano controlli
     {
-        if(currentSquare == null)
-            ((Square)e.getSource()).setBackground(Color.green);
-        else
+        mouseOverSquare = (Square) e.getSource();
+        if(mouseOverSquare.getParent().equals(yourBoardPanel))
+        //<editor-fold defaultstate="collapsed" desc="Mouse in yourField">
         {
-            int[] s1 = findSquare(currentSquare);
-            int[] s2 = findSquare((Square)e.getSource());
-            int len = Integer.parseInt(this.status.split(" ")[1]);
-            char dir = calcDir(s1, s2);
-            if(isInBounds(s1[0], s1[1], dir, len) && isPositionValid(s1[0], s1[1], dir, len))
+            if(status.startsWith("INS"))
             {
-                ((Square)e.getSource()).setBackground(Color.blue);
-                switch(dir)
+                if(selectedSquare == null)
+                    (mouseOverSquare).setBackground(Color.green);
+                else
                 {
-                    case 'n':
-                        for(int i = 0; i < len; i++)
+                    int[] s1 = findSquare(selectedSquare, yourBoard);
+                    int[] s2 = findSquare(mouseOverSquare, yourBoard);
+                    int len = Integer.parseInt(this.status.split(" ")[1]);
+                    char dir = calcDir(s1, s2);
+                    if(isInBounds(s1[0], s1[1], dir, len) && isPositionValid(s1[0], s1[1], dir, len))
+                    {
+                        (mouseOverSquare).setBackground(Color.blue);
+                        switch(dir)
                         {
-                            board[s1[0]][s1[1]-i].setBackground(Color.red);
+                            case 'n':
+                                for(int i = 0; i < len; i++)
+                                {
+                                    yourBoard[s1[0]][s1[1]-i].setBackground(Color.red);
+                                }
+                                break;
+                            case 'w':
+                                for(int i = 0; i < len; i++)
+                                {
+                                    yourBoard[s1[0]-i][s1[1]].setBackground(Color.red);
+                                }
+                                break;
+                            case 's':
+                                for(int i = 0; i < len; i++)
+                                {
+                                    yourBoard[s1[0]][s1[1]+i].setBackground(Color.red);
+                                }
+                                break;
+                            case 'e':
+                                for(int i = 0; i < len; i++)
+                                {
+                                    yourBoard[s1[0]+i][s1[1]].setBackground(Color.red);
+                                }
+                                break;
                         }
-                    break;
-                    case 'w':
-                        for(int i = 0; i < len; i++)
-                        {
-                            board[s1[0]-i][s1[1]].setBackground(Color.red);
-                        }
-                    break;
-                    case 's':
-                        for(int i = 0; i < len; i++)
-                        {
-                            board[s1[0]][s1[1]+i].setBackground(Color.red);
-                        }
-                    break;
-                    case 'e':
-                        for(int i = 0; i < len; i++)
-                        {
-                            board[s1[0]+i][s1[1]].setBackground(Color.red);
-                        }
-                    break;
+                    }
+                    else
+                    {
+                        (mouseOverSquare).setBackground(Color.yellow);
+                    }
                 }
             }
             else
             {
-                ((Square)e.getSource()).setBackground(Color.yellow);
+                (mouseOverSquare).setBackground(Color.gray);
+            }
+        }
+        //</editor-fold>
+        else
+        {
+            if(status.startsWith("ATT"))
+            {
+                mouseOverSquare.setBackground(Color.red);
+            }
+            else
+            {
+                mouseOverSquare.setBackground(Color.gray);
             }
         }
     }
@@ -177,50 +256,61 @@ public class BattagliaNavaleClient implements MouseListener
     @Override
     public void mouseExited(MouseEvent e)   //TODO: Mancano controlli
     {
-        ((Square)e.getSource()).resetColor();
-        if(currentSquare != null)
+        Square source = (Square)e.getSource();
+        source.resetColor();
+        if(source.getParent().equals(yourBoardPanel))
         {
-            int[] s1 = findSquare(currentSquare);
-            int[] s2 = findSquare((Square)e.getSource());
-            int len = Integer.parseInt(status.split(" ")[1]);
-            try
+            if(status.startsWith("INS"))
             {
-                switch(calcDir(s1, s2))
+                if(selectedSquare != null)
                 {
-                    case 'n':
-                        for(int i = 0; i < len; i++)
+                    int[] s1 = findSquare(selectedSquare, yourBoard);
+                    int[] s2 = findSquare(source, yourBoard);
+                    int len = Integer.parseInt(status.split(" ")[1]);
+                    try
+                    {
+                        switch(calcDir(s1, s2))
                         {
-                            board[s1[0]][s1[1]-i].resetColor();
+                            case 'n':
+                                for(int i = 0; i < len; i++)
+                                {
+                                    yourBoard[s1[0]][s1[1]-i].resetColor();
+                                }
+                            break;
+                            case 'w':
+                                for(int i = 0; i < len; i++)
+                                {
+                                    yourBoard[s1[0]-i][s1[1]].resetColor();
+                                }
+                            break;
+                            case 's':
+                                for(int i = 0; i < len; i++)
+                                {
+                                    yourBoard[s1[0]][s1[1]+i].resetColor();
+                                }
+                            break;
+                            case 'e':
+                                for(int i = 0; i < len; i++)
+                                {
+                                    yourBoard[s1[0]+i][s1[1]].resetColor();
+                                }
+                            break;
                         }
-                    break;
-                    case 'w':
-                        for(int i = 0; i < len; i++)
-                        {
-                            board[s1[0]-i][s1[1]].resetColor();
-                        }
-                    break;
-                    case 's':
-                        for(int i = 0; i < len; i++)
-                        {
-                            board[s1[0]][s1[1]+i].resetColor();
-                        }
-                    break;
-                    case 'e':
-                        for(int i = 0; i < len; i++)
-                        {
-                            board[s1[0]+i][s1[1]].resetColor();
-                        }
-                    break;
+                    }
+                    catch(ArrayIndexOutOfBoundsException ex)
+                    {
+                        System.out.println("Perhaps you should add proper controls instead of relying on a try-catch..."); //I mean, it works, but it's hella ugly
+                    }
                 }
             }
-            catch(ArrayIndexOutOfBoundsException ex)
-            {
-                System.out.println("Magari dovresti aggiungere i controlli invece che affidarti al try...");
-            }
+        }
+        else
+        {
+            
         }
     }
     
-    private int[] findSquare (Square s)
+    private int[] findSquare (Square s, Square[][] board)
     {
         int ret[] = new int[2];
         
@@ -263,39 +353,14 @@ public class BattagliaNavaleClient implements MouseListener
     
     void insert(int x, int y, char dir)
     {
-        System.out.println("Dir: '" + dir + "'");
-        output.println(x + " " + y + " " + dir);
-        String statuscode = input.nextLine();
-        System.out.println("Status: " + statuscode);
-        
-        if(statuscode.equals("OK"))
-        {
-            while(input.hasNextLine())
-            {
-                String comm = input.nextLine();
-                System.out.println(comm);
-                if(comm.equals("END"))
-                {
-                    this.status = input.nextLine();
-                    System.out.println(statuscode);
-                    messageLabel.setText(input.nextLine());
-                    break;
-                }
-                int i = Integer.parseInt(comm.split(" ")[1]);
-                int j = Integer.parseInt(comm.split(" ")[2]);
-                board[i][j].setColor(Color.red);
-                board[i][j].setBackground(Color.red);
-            }
-        }
-        else if (statuscode.startsWith("ERR"))
-        {
-            switch(statuscode.split(" ")[1])    //Error code
-            {
-                default:
-                    this.status = input.nextLine();
-                    messageLabel.setText(input.nextLine());
-            }
-        }
+        setStatus("WAT");
+        listener.send(x + " " + y + " " + dir);
+    }
+    
+    void attack(int x, int y)
+    {
+        setStatus("WAT");
+        listener.send(x + " " + y + " ");
     }
     
     boolean isInBounds(int x, int y, char dir, int l)
@@ -335,49 +400,144 @@ public class BattagliaNavaleClient implements MouseListener
 
     private boolean isPositionValid(int x, int y, char dir, int len)
     {
-        switch(dir)
-        {
-            case 'n':
-                for(int i = x - 1; i <= x+1; i++)
-                {
-                    for(int j = y + 1; j >= y - len; j--)
+            switch(dir)
+            {
+                case 'n':
+                    for(int i = x - 1; i <= x+1; i++)
                     {
-                        if(board[i][j].getBackground().equals(Color.red))
-                            return false;
+                        for(int j = y + 1; j >= y - len; j--)
+                        {
+                            try
+                            {
+                                if(yourBoard[i][j].getBackground().equals(Color.red))
+                                    return false;
+                            } catch (ArrayIndexOutOfBoundsException ex)
+                            {
+                                    System.out.println("Perhaps you should add proper controls instead of relying on a try-catch...");  //I mean, it works, but it's hella ugly
+                            }
+                        }
                     }
-                }
-                break;
-            case 'w':
-                for(int i = x + 1; i >= x - len; i--)
-                {
-                    for(int j = y - 1; j <= y + 1; j++)
+                    break;
+                case 'w':
+                    for(int i = x + 1; i >= x - len; i--)
                     {
-                        if(board[i][j].getBackground().equals(Color.red))
-                            return false;
+                        for(int j = y - 1; j <= y + 1; j++)
+                        {
+                            try
+                            {
+                            if(yourBoard[i][j].getBackground().equals(Color.red))
+                                return false;
+                            } catch (ArrayIndexOutOfBoundsException ex)
+                            {
+                                    System.out.println("Perhaps you should add proper controls instead of relying on a try-catch...");  //I mean, it works, but it's hella ugly
+                            }
+                        }
                     }
-                }
-                break;
-            case 's':
-                for(int i = x - 1; i <= x+1; i++)
-                {
-                    for(int j = y - 1; j <= y + len; j++)
+                    break;
+                case 's':
+                    for(int i = x - 1; i <= x+1; i++)
                     {
-                        if(board[i][j].getBackground().equals(Color.red))
-                            return false;
+                        for(int j = y - 1; j <= y + len; j++)
+                        {
+                            try
+                            {
+                            if(yourBoard[i][j].getBackground().equals(Color.red))
+                                return false;
+                            } catch (ArrayIndexOutOfBoundsException ex)
+                            {
+                                    System.out.println("Perhaps you should add proper controls instead of relying on a try-catch...");  //I mean, it works, but it's hella ugly
+                            }
+                        }
                     }
-                }
-                break;
-            case 'e':
-                for(int i = x - 1; i <= x + len; i++)
-                {
-                    for(int j = y - 1; j <= y + 1; j++)
+                    break;
+                case 'e':
+                    for(int i = x - 1; i <= x + len; i++)
                     {
-                        if(board[i][j].getBackground().equals(Color.red))
-                            return false;
+                        for(int j = y - 1; j <= y + 1; j++)
+                        {
+                            try
+                            {
+                            if(yourBoard[i][j].getBackground().equals(Color.red))
+                                return false;
+                            } catch (ArrayIndexOutOfBoundsException ex)
+                            {
+                                    System.out.println("Perhaps you should add proper controls instead of relying on a try-catch...");  //I mean, it works, but it's hella ugly
+                            }
+                        }
                     }
-                }
-                break;
-        }
+                    break;
+            }
         return true;
+    }
+
+    void drawPiece(int x, int y)
+    {
+        yourBoard[x][y].setColor(Color.red);
+        yourBoard[x][y].setBackground(Color.red);
+    }
+
+    void drawHit(int x, int y)
+    {
+        opponentBoard[x][y].setColor(Color.red);
+        opponentBoard[x][y].setBackground(Color.red);
+    }
+
+    void setError(String err)
+    {
+        messageLabel.setText(err);
+        messageLabel.setForeground(Color.red);
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent e) {} //Unused
+
+    @Override
+    public void mouseMoved(MouseEvent e)
+    {
+        if(e.getXOnScreen() < frame.getX() + (frame.getWidth() / 2.34))
+        {  
+            if(e.getYOnScreen() < frame.getY() + (frame.getHeight() / 2.69))
+            {
+                face.setText("('◡' )");
+            }
+            else if(e.getYOnScreen() > frame.getY() + (frame.getHeight() / 1.68))
+            {
+                face.setText("(.‿. )");
+            }
+            else
+            {
+                face.setText("(·‿· )");
+            }
+        }
+        else if(e.getXOnScreen() > frame.getX() + (frame.getWidth()/1.75))
+        {
+            if(e.getYOnScreen() < frame.getY() + (frame.getHeight() / 2.69))
+            {
+                face.setText("( '◡')");
+            }
+            else if(e.getYOnScreen() > frame.getY() + (frame.getHeight() / 1.68))
+            {
+                face.setText("( .‿.)");
+            }
+            else
+            {
+                face.setText("( ·‿·)");
+            }
+        }
+        else
+        {
+            if(e.getYOnScreen() < frame.getY() + (frame.getHeight()/2.69))
+            {
+                face.setText("('◡')");
+            }
+            else if(e.getYOnScreen() > frame.getY() + (frame.getHeight()/1.68))
+            {
+                face.setText("(.‿.)");
+            }
+            else
+            {
+                face.setText("(｡◕‿◕｡)");
+            }
+        }
     }
 }

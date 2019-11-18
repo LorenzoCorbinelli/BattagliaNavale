@@ -5,6 +5,7 @@ import java.util.ArrayList;
 public class Nave 
 {
     public ArrayList<Pezzo> pezzi; //declaration of new variable
+    public boolean affondata = false;
     
     public Nave() //constructor
     {
