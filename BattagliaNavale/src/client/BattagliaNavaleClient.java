@@ -83,24 +83,25 @@ public class BattagliaNavaleClient implements MouseListener, MouseMotionListener
         Border rightBorder = BorderFactory.createMatteBorder(1, 1, 0, 1, Color.black);
         Border cornerBorder = BorderFactory.createMatteBorder(1, 1, 1, 1, Color.black);
         face = new JLabel("(·‿·)", JLabel.CENTER);
+        
         for (int j = -1; j < dim+1; j++)
         {
             for (int i = -1; i < dim+1; i++)
             {
                 if((j==-1&&i==-1)||(j==-1&&i==dim)||(j==dim&&i==-1)||(j==dim&&i==dim))  //corners
                 {
-                 yourBoardPanel.add(new JLabel(" "));
-                 opponentBoardPanel.add(new JLabel(" "));
+                    yourBoardPanel.add(new JLabel(" "));
+                    opponentBoardPanel.add(new JLabel(" "));
                 }
                 else if(j==-1||j==dim)  //top and bottom row
                 {
-                 yourBoardPanel.add(new JLabel("  "+(char)(i+'A')));
-                 opponentBoardPanel.add(new JLabel("  "+(char)(i+'A')));
+                    yourBoardPanel.add(new JLabel(""+(char)(i+'A'), JLabel.CENTER));
+                    opponentBoardPanel.add(new JLabel(""+(char)(i+'A'), JLabel.CENTER));
                 }
                 else if(i==-1||i==dim)  //left and right column
                 {
-                 yourBoardPanel.add(new JLabel((j+1)+""));
-                 opponentBoardPanel.add(new JLabel((j+1)+""));
+                    yourBoardPanel.add(new JLabel((j+1)+"", JLabel.CENTER));
+                    opponentBoardPanel.add(new JLabel((j+1)+"", JLabel.CENTER));
                 }
                 else
                 {
@@ -142,7 +143,7 @@ public class BattagliaNavaleClient implements MouseListener, MouseMotionListener
         frame.getContentPane().add(yourBoardPanel, BorderLayout.WEST);
         frame.getContentPane().add(opponentBoardPanel, BorderLayout.EAST);
         frame.getContentPane().add(face, BorderLayout.CENTER);
-        messageLabel.setText("I'm blue da-ba-dee");
+        messageLabel.setText("Praise the sun");
         frame.pack();
         frame.addMouseMotionListener(this);
         System.out.println(yourBoardPanel.getHeight() + " ," + yourBoardPanel.getWidth());
