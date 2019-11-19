@@ -69,29 +69,41 @@ public class messageListener implements Runnable
             System.out.println(Arrays.toString(command));
             switch(command[0])
             {
-                case "DIM":
+                case "DIM": //Dimensions
                     client.setup(Integer.parseInt(command[1]));
                     break;
-                case "MSG":
+                case "MSG": //Message
                     client.setText(reassCommand(command));
                     break;
-                case "PIE":
+                case "PIE": //Piece
                     client.drawPiece(Integer.parseInt(command[1]), Integer.parseInt(command[2]));
                     break;
-                case "STA":
+                case "STA": //Status
                     client.setStatus(reassCommand(command));
                     break;
-                case "HIT":
+                case "HIT": //Hit
                     client.drawHit(Integer.parseInt(command[1]), Integer.parseInt(command[2]));
+                    break;
+                case "WAT": //Water
+                    client.drawWater(Integer.parseInt(command[1]), Integer.parseInt(command[2]));
+                    break;
+                case "THY": //They Hit You
+                    client.drawHit(Integer.parseInt(command[1]), Integer.parseInt(command[2]));
+                    break;
+                case "THW": //They Hit Water
+                    client.drawWater(Integer.parseInt(command[1]), Integer.parseInt(command[2]));
                     break;
                 case "ERR":
                     client.setError(reassCommand(command));
                     try
-                    {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException ex) {}
+                    {Thread.sleep(1000);}
+                    catch (InterruptedException ex) {}
                     break;
-                case "":
+                case "WIN":
+                    client.setText("Hai vinto!");
+                    break;
+                case "LOS":
+                    client.setText("Oh no! Hai perso!");
                     break;
             }
         }

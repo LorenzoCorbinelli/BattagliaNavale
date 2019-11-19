@@ -206,7 +206,7 @@ public class Player implements Runnable
 
     private void attacca()
     {
-        int x,y;
+        int x=0,y=0;
         boolean invalidPos, hit;
 
         do
@@ -215,46 +215,104 @@ public class Player implements Runnable
                 yourTurn.acquire();
             } catch (InterruptedException ex) {System.out.println("Interrotto!");}
             
-            do
+            if(partita.inProgress)
             {
-                hit = false;
-                listener.send("STA ATT");
-                listener.send("MSG È il tuo turno");
-
-
                 do
                 {
-                    String[] c = listener.getLastCommand().split(" "); //declaration of a new variable that was initialized with coordinates and direction of the boat 
-                    System.out.println(Arrays.toString(c)); //print in terminal the array like a string
-                    x = Integer.parseInt(c[0]); //declaration of a new variable x for coordinateX that was initialized with the value in c[0] modulation with the dimensions of the player's court
-                    y = Integer.parseInt(c[1]);  //declaration of a new variable x for coordinateX that was initialized with the value in c[0] divided by the dimensions of the player's court
+                    hit = false;
 
-                    invalidPos = moves.contains(new Position(x,y));
-                    if(invalidPos)
-                        listener.send("ERR Hai già attaccato in questo punto");
-                }while (invalidPos);
-
-                //AGGIUNGERE CONTROLLI
-                for (Nave n : avversario.navi)
-                {
-                    for (Pezzo p : n.pezzi)
+                    do
                     {
-                        if(p.x == x && p.y == y)
+                        listener.send("STA ATT");
+                        listener.send("MSG È il tuo turno");
+                        String[] c = listener.getLastCommand().split(" "); //declaration of a new variable that was initialized with coordinates and direction of the boat 
+                        System.out.println(Arrays.toString(c)); //print in terminal the array like a string
+                        x = Integer.parseInt(c[0]); //declaration of a new variable x for coordinateX that was initialized with the value in c[0] modulation with the dimensions of the player's court
+                        y = Integer.parseInt(c[1]);  //declaration of a new variable x for coordinateX that was initialized with the value in c[0] divided by the dimensions of the player's court
+
+                        invalidPos = moves.contains(new Position(x,y));
+                        if(invalidPos)
+                            listener.send("ERR Hai già attaccato in questo punto");
+                    }while (invalidPos);
+
+                    //AGGIUNGERE CONTROLLI
+                    for (Nave n : avversario.navi)
+                    {
+                        if(!n.affondata)
                         {
-                            p.colpito = true;
-                            listener.send("HIT " + x + " " + y);
-                            hit = true;
+                            for (Pezzo p : n.pezzi)
+                            {
+                                if(p.x == x && p.y == y)
+                                {
+                                    p.colpito = true;
+                                    hit = true;
+                                }
+                            }
+
+                            if(n.checkAffondata())
+                            {
+                                for(Pezzo p: n.pezzi)
+                                {
+                                    for(int i = p.x - 1; i <= p.x + 1; i++)
+                                    {
+                                        for(int j = p.y - 1; j <= p.y + 1; j++)
+                                        {
+                                            if(i >= 0 && i < partita.getDimensioneCampo() && j >= 0 && j < partita.getDimensioneCampo())
+                                            {
+                                                listener.send("WAT " + i + " " + j);
+                                                moves.add(new Position(i,j));
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            
+                            for(Pezzo p: n.pezzi)
+                            {
+                                if(p.colpito)
+                                    listener.send("HIT " + p.x + " " + p.y);
+                            }
+                            
+                            if(hit)
+                                break;
                         }
                     }
-                }
-            }while(hit);
 
-            listener.send("STA WAT");
-            listener.send("MSG È il turno dell'avversario");
 
-            opponentTurn.release();
+                    checkWin();
+
+                    moves.add(new Position(x,y));
+                }while(hit && partita.inProgress);
+            }
+            
+            if(partita.inProgress)
+            {
+                listener.send("WAT " + x + " " + y);
+
+                listener.send("STA WAT");
+                listener.send("MSG È il turno dell'avversario");
+
+                opponentTurn.release();
+            }
         }while(partita.inProgress);
         System.out.println("Aight, Imma head out");
+    }
+
+    private void checkWin()
+    {
+        for(Nave n : avversario.navi)
+        {
+            if (!n.affondata)
+                return;
+        }
+        win();
+        partita.inProgress=false;
+    }
+
+    private void win() 
+    {
+        listener.send("WIN");
+        avversario.listener.send("LOS");
     }
     
 }

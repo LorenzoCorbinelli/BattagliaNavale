@@ -28,10 +28,15 @@ public class Partita
     {
         try (ServerSocket listener = new ServerSocket(50900)) //try to connect server with client at the port '50900' 
         {
-            System.out.println("Server is Running... v0.2"); //print that string (Server is running...)
-            ExecutorService pool = Executors.newFixedThreadPool(2);
-            while(true) //FOR TESTING PURPOSES
+            System.out.println("Welcome to the Ultimate Battleship server! Current version: 0.8\nWaiting for players to connect..."); //print that string (Server is running...)
+            while(true) //How many games can the server handle before shutting down at once? Infinite!
+            {   
+                ExecutorService pool = Executors.newFixedThreadPool(2);
                 pool.execute(new Player(listener.accept(), this)); //?????????
+                System.out.println("Player 1 joined. Waiting for Player 2...");
+                pool.execute(new Player(listener.accept(), this)); //?????????
+                System.out.println("Player 2 joined. LET THE GAME BEGIN!");
+            }
         }
         catch (Exception E) //if server doesn't connectto client
         {}

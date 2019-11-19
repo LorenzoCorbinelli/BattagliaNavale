@@ -53,7 +53,7 @@ public class BattagliaNavaleClient implements MouseListener, MouseMotionListener
     public BattagliaNavaleClient(String serverAddress)
     {
         status = "WAT";
-        frame = new JFrame("Battaglia Navale");
+        frame = new JFrame("Ultimate Battleship");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setPreferredSize(new Dimension(1024, 490));
         frame.setVisible(true);
@@ -480,6 +480,18 @@ public class BattagliaNavaleClient implements MouseListener, MouseMotionListener
     {
         opponentBoard[x][y].setColor(Color.red);
         opponentBoard[x][y].setBackground(Color.red);
+    }
+    
+    void drawWater(int x, int y)
+    {
+        opponentBoard[x][y].setColor(Color.CYAN);
+        opponentBoard[x][y].setBackground(Color.CYAN);
+    }
+    
+    void drawOppHitWater(int x, int y)
+    {
+        yourBoard[x][y].setColor(Color.CYAN);
+        yourBoard[x][y].setBackground(Color.CYAN);
     }
 
     void setError(String err)
