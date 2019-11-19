@@ -10,7 +10,7 @@ public class Partita
     public boolean inProgress;
     public Player currentPlayer; //declaration of new Player variable that can identify the current player
     
-    public Partita() //obsolete constructor 
+    public Partita()
     {
         this.dimensione = 21; //new value assigned to dimensione's variable
         this.inProgress = true; //Ricordarsi di impostare le variabili potrebbe salvarti diverse ore di lavoro...

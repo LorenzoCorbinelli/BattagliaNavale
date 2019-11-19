@@ -73,52 +73,68 @@ public class BattagliaNavaleClient implements MouseListener, MouseMotionListener
         this.dim = dim;
         yourBoardPanel = new JPanel();
         opponentBoardPanel = new JPanel();
-        yourBoard = new Square[dim][dim];
-        opponentBoard = new Square[dim][dim];
+        yourBoard = new Square[dim][dim];   
+        opponentBoard = new Square[dim][dim];  
         messageLabel= new JLabel();
-        yourBoardPanel.setLayout(new GridLayout(dim, dim,0,0));
-        opponentBoardPanel.setLayout(new GridLayout(dim, dim,0,0));
+        yourBoardPanel.setLayout(new GridLayout(dim+2, dim+2,0,0));
+        opponentBoardPanel.setLayout(new GridLayout(dim+2, dim+2,0,0));
         Border border = BorderFactory.createMatteBorder(1, 1, 0, 0, Color.black);
         Border bottomBorder = BorderFactory.createMatteBorder(1, 1, 1, 0, Color.black);
         Border rightBorder = BorderFactory.createMatteBorder(1, 1, 0, 1, Color.black);
         Border cornerBorder = BorderFactory.createMatteBorder(1, 1, 1, 1, Color.black);
         face = new JLabel("(·‿·)", JLabel.CENTER);
-        for (int j = 0; j < dim; j++)
+        for (int j = -1; j < dim+1; j++)
         {
-            for (int i = 0; i < dim; i++)
+            for (int i = -1; i < dim+1; i++)
             {
-                yourBoard[i][j] = new Square();
-                yourBoard[i][j].addMouseListener(this);
-                yourBoard[i][j].addMouseMotionListener(this);
-                yourBoardPanel.add(yourBoard[i][j]);
-                opponentBoard[i][j] = new Square();
-                opponentBoard[i][j].addMouseListener(this);
-                opponentBoard[i][j].addMouseMotionListener(this);
-                opponentBoardPanel.add(opponentBoard[i][j]);
-                if(i == dim - 1 && j == dim -1)
+                if((j==-1&&i==-1)||(j==-1&&i==dim)||(j==dim&&i==-1)||(j==dim&&i==dim))  //corners
                 {
-                    yourBoard[i][j].setBorder(cornerBorder);
-                    opponentBoard[i][j].setBorder(cornerBorder);
+                 yourBoardPanel.add(new JLabel(" "));
+                 opponentBoardPanel.add(new JLabel(" "));
                 }
-                else if(i == dim-1)
+                else if(j==-1||j==dim)  //top and bottom row
                 {
-                    yourBoard[i][j].setBorder(rightBorder);
-                    opponentBoard[i][j].setBorder(rightBorder);
+                 yourBoardPanel.add(new JLabel("  "+(char)(i+'A')));
+                 opponentBoardPanel.add(new JLabel("  "+(char)(i+'A')));
                 }
-                else if(j == dim - 1)
+                else if(i==-1||i==dim)  //left and right column
                 {
-                    yourBoard[i][j].setBorder(bottomBorder);
-                    opponentBoard[i][j].setBorder(bottomBorder);
+                 yourBoardPanel.add(new JLabel((j+1)+""));
+                 opponentBoardPanel.add(new JLabel((j+1)+""));
                 }
                 else
                 {
-                    yourBoard[i][j].setBorder(border);
-                    opponentBoard[i][j].setBorder(border);
+                    yourBoard[i][j] = new Square();
+                    yourBoard[i][j].addMouseListener(this);
+                    yourBoard[i][j].addMouseMotionListener(this);
+                    yourBoardPanel.add(yourBoard[i][j]);
+                    opponentBoard[i][j] = new Square();
+                    opponentBoard[i][j].addMouseListener(this);
+                    opponentBoard[i][j].addMouseMotionListener(this);
+                    opponentBoardPanel.add(opponentBoard[i][j]);
+                    if(i == dim - 1 && j == dim -1)
+                    {
+                        yourBoard[i][j].setBorder(cornerBorder);
+                        opponentBoard[i][j].setBorder(cornerBorder);
+                    }
+                    else if(i == dim-1)
+                    {
+                        yourBoard[i][j].setBorder(rightBorder);
+                        opponentBoard[i][j].setBorder(rightBorder);
+                    }
+                    else if(j == dim - 1)
+                    {
+                        yourBoard[i][j].setBorder(bottomBorder);
+                        opponentBoard[i][j].setBorder(bottomBorder);
+                    }
+                    else
+                    {
+                        yourBoard[i][j].setBorder(border);
+                        opponentBoard[i][j].setBorder(border);
+                    }
                 }
             }
         }
-        
-        //boardPanel.setBackground(Color.lightGray);
         yourBoardPanel.setPreferredSize(new Dimension(432,432));
         opponentBoardPanel.setPreferredSize(new Dimension(432,432));
         messageLabel.setBackground(Color.lightGray);
