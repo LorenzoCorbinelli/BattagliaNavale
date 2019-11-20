@@ -260,21 +260,30 @@ public class Player implements Runnable
                                             if(i >= 0 && i < partita.getDimensioneCampo() && j >= 0 && j < partita.getDimensioneCampo())
                                             {
                                                 listener.send("WAT " + i + " " + j);
+                                                avversario.listener.send("THW " + i + " " + j);
                                                 moves.add(new Position(i,j));
                                             }
                                         }
                                     }
                                 }
+                                for(Pezzo p: n.pezzi)
+                                {
+                                    if(p.colpito)
+                                    {
+                                        listener.send("HIT " + p.x + " " + p.y);
+                                        avversario.listener.send("THY " + p.x + " " + p.y);
+                                    }
+                                }
                             }
                             
-                            for(Pezzo p: n.pezzi)
-                            {
-                                if(p.colpito)
-                                    listener.send("HIT " + p.x + " " + p.y);
-                            }
+                            
                             
                             if(hit)
+                            {
+                                listener.send("HIT " + x + " " + y);
+                                avversario.listener.send("THY " + x + " " + y);
                                 break;
+                            }
                         }
                     }
 
@@ -288,6 +297,7 @@ public class Player implements Runnable
             if(partita.inProgress)
             {
                 listener.send("WAT " + x + " " + y);
+                avversario.listener.send("THW " + x + " " + y);
 
                 listener.send("STA WAT");
                 listener.send("MSG È il turno dell'avversario");

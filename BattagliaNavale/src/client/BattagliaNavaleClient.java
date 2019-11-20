@@ -49,7 +49,7 @@ public class BattagliaNavaleClient implements MouseListener, MouseMotionListener
                     break;
                 case "ATT":
                     if(mouseOverSquare.getParent().equals(opponentBoardPanel))
-                      mouseOverSquare.setBackground(Color.red);
+                        mouseOverSquare.setBackground(Color.red);
                     break;
             }
         }
@@ -536,7 +536,7 @@ public class BattagliaNavaleClient implements MouseListener, MouseMotionListener
         yourBoard[x][y].setBackground(Color.red);
         yourBoard[x][y].updateUI();
     }
-    
+
     void setError(String err)
     {
         messageLabel.setText(err);
