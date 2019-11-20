@@ -35,10 +35,15 @@ public class BattagliaNavaleClient implements MouseListener, MouseMotionListener
         {    switch(status.substring(0,3))
             {
                 case "INS":
-                    mouseOverSquare.setBackground(Color.green);
+                    if(mouseOverSquare.getParent().equals(yourBoardPanel))
+                        mouseOverSquare.setBackground(Color.green);
                     break;
                 case "WAT":
                     mouseOverSquare.setBackground(Color.gray);
+                    break;
+                case "ATT":
+                    if(mouseOverSquare.getParent().equals(opponentBoardPanel))
+                    mouseOverSquare.setBackground(Color.red);
                     break;
             }
         }
@@ -509,6 +514,11 @@ public class BattagliaNavaleClient implements MouseListener, MouseMotionListener
     {
         yourBoard[x][y].setColor(Color.CYAN);
         yourBoard[x][y].setBackground(Color.CYAN);
+    }
+    
+    void drawOppHit(int x, int y)
+    {
+        
     }
 
     void setError(String err)
