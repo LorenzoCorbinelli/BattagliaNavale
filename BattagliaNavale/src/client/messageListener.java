@@ -88,10 +88,10 @@ public class messageListener implements Runnable
                     client.drawWater(Integer.parseInt(command[1]), Integer.parseInt(command[2]));
                     break;
                 case "THY": //They Hit You
-                    client.drawHit(Integer.parseInt(command[1]), Integer.parseInt(command[2]));
+                    client.drawOppHit(Integer.parseInt(command[1]), Integer.parseInt(command[2]));
                     break;
                 case "THW": //They Hit Water
-                    client.drawWater(Integer.parseInt(command[1]), Integer.parseInt(command[2]));
+                    client.drawOppHitWater(Integer.parseInt(command[1]), Integer.parseInt(command[2]));
                     break;
                 case "ERR":
                     client.setError(reassCommand(command));

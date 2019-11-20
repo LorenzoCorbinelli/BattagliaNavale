@@ -7,7 +7,12 @@ import java.awt.GridLayout;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -26,6 +31,7 @@ public class BattagliaNavaleClient implements MouseListener, MouseMotionListener
     private Square selectedSquare;
     private String status;
     private int dim;
+    private ImageIcon explosion;
     private final messageListener listener; //Using threads comes with HUGE problems, like race conditions. They shuoldn'y cause many problems in this application, thus they're not checked (yet)
 
     public void setStatus(String status)
@@ -35,10 +41,15 @@ public class BattagliaNavaleClient implements MouseListener, MouseMotionListener
         {    switch(status.substring(0,3))
             {
                 case "INS":
-                    mouseOverSquare.setBackground(Color.green);
+                    if(mouseOverSquare.getParent().equals(yourBoardPanel))
+                        mouseOverSquare.setBackground(Color.green);
                     break;
                 case "WAT":
                     mouseOverSquare.setBackground(Color.gray);
+                    break;
+                case "ATT":
+                    if(mouseOverSquare.getParent().equals(opponentBoardPanel))
+                      mouseOverSquare.setBackground(Color.red);
                     break;
             }
         }
@@ -52,6 +63,13 @@ public class BattagliaNavaleClient implements MouseListener, MouseMotionListener
     
     public BattagliaNavaleClient(String serverAddress)
     {
+        
+        try 
+        {
+            //ImageIcon image = new ImageIcon(ImageIO.read(BattagliaNavaleClient.class.getResource("exprosion.png")));
+            //explosion = new ImageIcon(getScaledImage(image,14,14));
+            explosion = new ImageIcon(ImageIO.read(BattagliaNavaleClient.class.getResource("prova.gif")));
+        } catch (IOException ex) {}
         status = "WAT";
         frame = new JFrame("Ultimate Battleship");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -510,7 +528,15 @@ public class BattagliaNavaleClient implements MouseListener, MouseMotionListener
         yourBoard[x][y].setColor(Color.CYAN);
         yourBoard[x][y].setBackground(Color.CYAN);
     }
-
+    
+    void drawOppHit(int x, int y)
+    {
+        yourBoard[x][y].add(new JLabel(explosion));
+        yourBoard[x][y].setColor(Color.red);
+        yourBoard[x][y].setBackground(Color.red);
+        yourBoard[x][y].updateUI();
+    }
+    
     void setError(String err)
     {
         messageLabel.setText(err);
