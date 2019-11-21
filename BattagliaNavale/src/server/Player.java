@@ -290,11 +290,12 @@ public class Player implements Runnable
                     }
 
 
-                    checkWin();
 
                     moves.add(new Position(x,y));
                     listener.send("END");
                     avversario.listener.send("END");
+                    
+                    checkWin();
                 }while(hit && partita.inProgress);
             }
             
