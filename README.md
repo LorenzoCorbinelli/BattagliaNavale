@@ -65,7 +65,9 @@ java -jar "C:\Users\yourUser\BattagliaNavale\BattagliaNavale\dist\BattagliaNaval
 ```
 Per l'esecuzione del server dorvà essere aggiunto '-server'
 
+### Client folder
 
+### Server folder
 
 ##
 
