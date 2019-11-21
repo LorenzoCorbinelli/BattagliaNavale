@@ -49,17 +49,17 @@ clean and built project button
 ```
 il quale restiturirà un percorso che, se inserito nel *cmd* potrà permettere l'esecuzione del client. 
 
-## Ritorno della compilazione
+### Ritorno della compilazione
 ```
 Building jar: C:\Users\yourUser\BattagliaNavale\BattagliaNavale\dist\BattagliaNavale.jar
 To run this application from the command line without Ant, try:
 java -jar "C:\Users\yourUser\BattagliaNavale\BattagliaNavale\dist\BattagliaNavale.jar"
 ```
-## Esecuzione cmd server
+### Esecuzione cmd server
 ```
 "C:\Users\yourUser\BattagliaNavale\BattagliaNavale\dist\BattagliaNavale.jar" -server
 ```
-## Esecuzione cmd client
+### Esecuzione cmd client
 ```
 "C:\Users\yourUser\BattagliaNavale\BattagliaNavale\dist\BattagliaNavale.jar"
 ```
