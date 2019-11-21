@@ -122,11 +122,11 @@ public class BattagliaNavaleClient implements MouseListener, MouseMotionListener
                 }
                 else
                 {
-                    yourBoard[i][j] = new Square();
+                    yourBoard[i][j] = new Square(i,j);
                     yourBoard[i][j].addMouseListener(this);
                     yourBoard[i][j].addMouseMotionListener(this);
                     yourBoardPanel.add(yourBoard[i][j]);
-                    opponentBoard[i][j] = new Square();
+                    opponentBoard[i][j] = new Square(i,j);
                     opponentBoard[i][j].addMouseListener(this);
                     opponentBoard[i][j].addMouseMotionListener(this);
                     opponentBoardPanel.add(opponentBoard[i][j]);
@@ -189,12 +189,8 @@ public class BattagliaNavaleClient implements MouseListener, MouseMotionListener
                         selectedSquare = null;
                         return;
                     }
-                    int[] s1 = findSquare(selectedSquare, yourBoard);
-                    int[] s2 = findSquare(source, yourBoard);
-
+                    insert(selectedSquare.x, selectedSquare.y, calcDir(selectedSquare, source));
                     selectedSquare = null;
-
-                    insert(s1[0], s1[1], calcDir(s1, s2));
                 }
             }
         }
@@ -202,8 +198,7 @@ public class BattagliaNavaleClient implements MouseListener, MouseMotionListener
         {
             //if(status.equals("ATT"))
             {
-                int[] s1 = findSquare(source, opponentBoard);
-                attack(s1[0], s1[1]);
+                attack(source.x, source.y);
             }
         }
     }
@@ -227,11 +222,9 @@ public class BattagliaNavaleClient implements MouseListener, MouseMotionListener
                     (mouseOverSquare).setBackground(Color.green);
                 else
                 {
-                    int[] s1 = findSquare(selectedSquare, yourBoard);
-                    int[] s2 = findSquare(mouseOverSquare, yourBoard);
                     int len = Integer.parseInt(this.status.split(" ")[1]);
-                    char dir = calcDir(s1, s2);
-                    if(isInBounds(s1[0], s1[1], dir, len) && isPositionValid(s1[0], s1[1], dir, len))
+                    char dir = calcDir(selectedSquare, mouseOverSquare);
+                    if(isInBounds(selectedSquare.x, selectedSquare.y, dir, len) && isPositionValid(selectedSquare.x, selectedSquare.y, dir, len))
                     {
                         (mouseOverSquare).setBackground(Color.blue);
                         switch(dir)
@@ -239,25 +232,25 @@ public class BattagliaNavaleClient implements MouseListener, MouseMotionListener
                             case 'n':
                                 for(int i = 0; i < len; i++)
                                 {
-                                    yourBoard[s1[0]][s1[1]-i].setBackground(Color.red);
+                                    yourBoard[selectedSquare.x][selectedSquare.y-i].setBackground(Color.red);
                                 }
                                 break;
                             case 'w':
                                 for(int i = 0; i < len; i++)
                                 {
-                                    yourBoard[s1[0]-i][s1[1]].setBackground(Color.red);
+                                    yourBoard[selectedSquare.x-i][selectedSquare.y].setBackground(Color.red);
                                 }
                                 break;
                             case 's':
                                 for(int i = 0; i < len; i++)
                                 {
-                                    yourBoard[s1[0]][s1[1]+i].setBackground(Color.red);
+                                    yourBoard[selectedSquare.x][selectedSquare.y+i].setBackground(Color.red);
                                 }
                                 break;
                             case 'e':
                                 for(int i = 0; i < len; i++)
                                 {
-                                    yourBoard[s1[0]+i][s1[1]].setBackground(Color.red);
+                                    yourBoard[selectedSquare.x+i][selectedSquare.y].setBackground(Color.red);
                                 }
                                 break;
                         }
@@ -299,37 +292,35 @@ public class BattagliaNavaleClient implements MouseListener, MouseMotionListener
             {
                 if(selectedSquare != null)
                 {
-                    int[] s1 = findSquare(selectedSquare, yourBoard);
-                    int[] s2 = findSquare(source, yourBoard);
                     int len = Integer.parseInt(status.split(" ")[1]);
-                    switch(calcDir(s1, s2))
+                    switch(calcDir(selectedSquare, source))
                     {
                         case 'n':
                             for(int i = 0; i < len; i++)
                             {
-                                if(i<dim)
-                                    yourBoard[s1[0]][s1[1]-i].resetColor();
+                                if(selectedSquare.y-i>0)
+                                    yourBoard[selectedSquare.x][selectedSquare.y-i].resetColor();
                             }
                         break;
                         case 'w':
                             for(int i = 0; i < len; i++)
                             {
-                                if(i<dim)
-                                    yourBoard[s1[0]-i][s1[1]].resetColor();
+                                if(selectedSquare.x-i>0)
+                                    yourBoard[selectedSquare.x-i][selectedSquare.y].resetColor();
                             }
                         break;
                         case 's':
                             for(int i = 0; i < len; i++)
                             {
-                                if(i<dim)
-                                    yourBoard[s1[0]][s1[1]+i].resetColor();
+                                if(selectedSquare.y+i<dim)
+                                    yourBoard[selectedSquare.x][selectedSquare.y+i].resetColor();
                             }
                         break;
                         case 'e':
                             for(int i = 0; i < len; i++)
                             {
-                                if(i<dim)
-                                    yourBoard[s1[0]+i][s1[1]].resetColor();
+                                if(selectedSquare.x+i<dim)
+                                    yourBoard[selectedSquare.x+i][selectedSquare.y].resetColor();
                             }
                         break;
                     }
@@ -338,29 +329,10 @@ public class BattagliaNavaleClient implements MouseListener, MouseMotionListener
         }
     }
     
-    private int[] findSquare (Square s, Square[][] board)
+    private char calcDir(Square s1, Square s2)
     {
-        int ret[] = new int[2];
-        
-        for(int i = 0; i < board.length; i++)
-        {
-            for(int j = 0; j < board.length; j++)
-            {
-                if(board[i][j].equals(s))
-                {
-                    ret[0]=i; ret[1]=j;
-                    return ret;
-                }
-            }
-        }
-        
-        return null;
-    }
-    
-    private char calcDir(int s1[], int s2[])
-    {
-        int diffx = s1[0] - s2[0];
-        int diffy = s1[1] - s2[1];
+        int diffx = s1.x - s2.x;
+        int diffy = s1.y - s2.y;
 
         if(Math.abs(diffy) > Math.abs(diffx))
         {

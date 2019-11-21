@@ -119,7 +119,7 @@ public class Player implements Runnable
     
     private boolean inserisciNave(int len) //inserisciNave' method with parameters (dimension of the boat)
     {
-            String[] c = listener.getLastCommand().split(" "); //declaration of a new variable that was initialized with coordinates and direction of the boat 
+            String[] c = listener.getCommand().split(" "); //declaration of a new variable that was initialized with coordinates and direction of the boat 
             System.out.println(Arrays.toString(c)); //print in terminal the array like a string
             int x = Integer.parseInt(c[0]); //declaration of a new variable x for coordinateX that was initialized with the value in c[0] modulation with the dimensions of the player's court
             int y = Integer.parseInt(c[1]);  //declaration of a new variable x for coordinateX that was initialized with the value in c[0] divided by the dimensions of the player's court
@@ -153,28 +153,28 @@ public class Player implements Runnable
             case 'n':
                 for(int i = y; i>y-l; i--)
                 {
-                    if(i < 0 || i > partita.getDimensioneCampo())   //Out of Bounds, return
+                    if(i < 0 || i >= partita.getDimensioneCampo())   //Out of Bounds, return
                         return false;
                     compnave.add(new Pezzo(x,i));
                 }   break;
             case 'e':
                 for(int i = x; i<x+l; i++)
                 {
-                    if(i < 0 || i > partita.getDimensioneCampo())   //Out of Bounds, return
+                    if(i < 0 || i >= partita.getDimensioneCampo())   //Out of Bounds, return
                         return false;
                     compnave.add(new Pezzo(i,y));
                 }   break;
             case 's':
                 for(int i = y; i<y+l; i++)
                 {
-                    if(i < 0 || i > partita.getDimensioneCampo())   //Out of Bounds, return
+                    if(i < 0 || i >= partita.getDimensioneCampo())   //Out of Bounds, return
                         return false;
                     compnave.add(new Pezzo(x,i));
                 }   break;
             case 'w':
                 for(int i = x; i>x-l; i--)
                 {
-                    if(i < 0 || i > partita.getDimensioneCampo())   //Out of Bounds, return
+                    if(i < 0 || i >= partita.getDimensioneCampo())   //Out of Bounds, return
                         return false;
                     compnave.add(new Pezzo(i,y));
                 }   break;
@@ -220,12 +220,11 @@ public class Player implements Runnable
                 do
                 {
                     hit = false;
-
                     do
                     {
                         listener.send("STA ATT");
                         listener.send("MSG È il tuo turno");
-                        String[] c = listener.getLastCommand().split(" "); //declaration of a new variable that was initialized with coordinates and direction of the boat 
+                        String[] c = listener.getCommand().split(" "); //declaration of a new variable that was initialized with coordinates and direction of the boat 
                         System.out.println(Arrays.toString(c)); //print in terminal the array like a string
                         x = Integer.parseInt(c[0]); //declaration of a new variable x for coordinateX that was initialized with the value in c[0] modulation with the dimensions of the player's court
                         y = Integer.parseInt(c[1]);  //declaration of a new variable x for coordinateX that was initialized with the value in c[0] divided by the dimensions of the player's court
@@ -234,7 +233,7 @@ public class Player implements Runnable
                         if(invalidPos)
                             listener.send("ERR Hai già attaccato in questo punto");
                     }while (invalidPos);
-
+                    
                     //AGGIUNGERE CONTROLLI
                     listener.send("BRD");
                     avversario.listener.send("BRD");
@@ -306,7 +305,7 @@ public class Player implements Runnable
 
                 listener.send("STA WAT");
                 listener.send("MSG È il turno dell'avversario");
-
+                
                 opponentTurn.release();
             }
             else
@@ -315,7 +314,6 @@ public class Player implements Runnable
                 avversario.listener.send("END");
             }
         }while(partita.inProgress);
-        NotHit();
         System.out.println("Aight, Imma head out");
     }
 
@@ -344,6 +342,7 @@ public class Player implements Runnable
     
     private void win() 
     {
+        NotHit();
         listener.send("WIN");
         avversario.listener.send("LOS");
     }

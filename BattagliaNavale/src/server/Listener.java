@@ -15,7 +15,7 @@ import java.util.concurrent.Semaphore;
  *
  * @author Ricca
  */
-public class Listener implements Runnable
+public class Listener implements Runnable   //This is quite a mess, but it seems to be working
 {
 
     private boolean running;
@@ -23,7 +23,7 @@ public class Listener implements Runnable
     private Scanner input;
     private PrintWriter output;
     private final Thread thread;
-    public boolean ignoreInput;
+    public boolean requiredInput;
     String lastCommand;
     Semaphore commandPresent;
     
@@ -37,9 +37,7 @@ public class Listener implements Runnable
             input = new Scanner(socket.getInputStream(), "UTF-8");
             output = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), "UTF-8"), true); 
         } catch (Exception ex)
-        {
-            System.out.println("Something's wrong here");
-        }
+        {}
         
         thread = new Thread(this, "listener");
         thread.start();
@@ -63,23 +61,28 @@ public class Listener implements Runnable
     @Override
     public void run()
     {
+        String command;
         while(running)
         {
-            lastCommand = input.nextLine();
-            if(commandPresent.availablePermits() == 0)
+            command = input.nextLine();
+            if(requiredInput)
             {
+                requiredInput = false;
+                lastCommand = command;
                 commandPresent.release();
             }
             System.out.println(lastCommand);
         }
     }
     
-    public String getLastCommand()  //I'm not 100% confident this works. Indeed
+    public String getCommand()
     {
+        requiredInput = true;
         try {
             commandPresent.acquire();
         } catch (InterruptedException ex) {}
-        return lastCommand;
+        String ret = lastCommand;
+        lastCommand = null;
+        return ret;
     }
-    
 }
