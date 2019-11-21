@@ -302,39 +302,36 @@ public class BattagliaNavaleClient implements MouseListener, MouseMotionListener
                     int[] s1 = findSquare(selectedSquare, yourBoard);
                     int[] s2 = findSquare(source, yourBoard);
                     int len = Integer.parseInt(status.split(" ")[1]);
-                    try
+                    switch(calcDir(s1, s2))
                     {
-                        switch(calcDir(s1, s2))
-                        {
-                            case 'n':
-                                for(int i = 0; i < len; i++)
-                                {
+                        case 'n':
+                            for(int i = 0; i < len; i++)
+                            {
+                                if(i<dim)
                                     yourBoard[s1[0]][s1[1]-i].resetColor();
-                                }
-                            break;
-                            case 'w':
-                                for(int i = 0; i < len; i++)
-                                {
+                            }
+                        break;
+                        case 'w':
+                            for(int i = 0; i < len; i++)
+                            {
+                                if(i<dim)
                                     yourBoard[s1[0]-i][s1[1]].resetColor();
-                                }
-                            break;
-                            case 's':
-                                for(int i = 0; i < len; i++)
-                                {
+                            }
+                        break;
+                        case 's':
+                            for(int i = 0; i < len; i++)
+                            {
+                                if(i<dim)
                                     yourBoard[s1[0]][s1[1]+i].resetColor();
-                                }
-                            break;
-                            case 'e':
-                                for(int i = 0; i < len; i++)
-                                {
+                            }
+                        break;
+                        case 'e':
+                            for(int i = 0; i < len; i++)
+                            {
+                                if(i<dim)
                                     yourBoard[s1[0]+i][s1[1]].resetColor();
-                                }
-                            break;
-                        }
-                    }
-                    catch(ArrayIndexOutOfBoundsException ex)
-                    {
-                        System.out.println("Perhaps you should add proper controls instead of relying on a try-catch..."); //I mean, it works, but it's hella ugly
+                            }
+                        break;
                     }
                 }
             }
@@ -438,14 +435,9 @@ public class BattagliaNavaleClient implements MouseListener, MouseMotionListener
                     {
                         for(int j = y + 1; j >= y - len; j--)
                         {
-                            try
-                            {
+                            if(i>0 && i<dim && j>0 && j<dim)
                                 if(yourBoard[i][j].getBackground().equals(Color.red))
                                     return false;
-                            } catch (ArrayIndexOutOfBoundsException ex)
-                            {
-                                    System.out.println("Perhaps you should add proper controls instead of relying on a try-catch...");  //I mean, it works, but it's hella ugly
-                            }
                         }
                     }
                     break;
@@ -454,14 +446,9 @@ public class BattagliaNavaleClient implements MouseListener, MouseMotionListener
                     {
                         for(int j = y - 1; j <= y + 1; j++)
                         {
-                            try
-                            {
-                            if(yourBoard[i][j].getBackground().equals(Color.red))
-                                return false;
-                            } catch (ArrayIndexOutOfBoundsException ex)
-                            {
-                                    System.out.println("Perhaps you should add proper controls instead of relying on a try-catch...");  //I mean, it works, but it's hella ugly
-                            }
+                            if(i>0 && i<dim && j>0 && j<dim)
+                                if(yourBoard[i][j].getBackground().equals(Color.red))
+                                    return false;
                         }
                     }
                     break;
@@ -470,14 +457,9 @@ public class BattagliaNavaleClient implements MouseListener, MouseMotionListener
                     {
                         for(int j = y - 1; j <= y + len; j++)
                         {
-                            try
-                            {
-                            if(yourBoard[i][j].getBackground().equals(Color.red))
-                                return false;
-                            } catch (ArrayIndexOutOfBoundsException ex)
-                            {
-                                    System.out.println("Perhaps you should add proper controls instead of relying on a try-catch...");  //I mean, it works, but it's hella ugly
-                            }
+                            if(i>0 && i<dim && j>0 && j<dim)
+                                if(yourBoard[i][j].getBackground().equals(Color.red))
+                                    return false;
                         }
                     }
                     break;
@@ -486,14 +468,9 @@ public class BattagliaNavaleClient implements MouseListener, MouseMotionListener
                     {
                         for(int j = y - 1; j <= y + 1; j++)
                         {
-                            try
-                            {
-                            if(yourBoard[i][j].getBackground().equals(Color.red))
-                                return false;
-                            } catch (ArrayIndexOutOfBoundsException ex)
-                            {
-                                    System.out.println("Perhaps you should add proper controls instead of relying on a try-catch...");  //I mean, it works, but it's hella ugly
-                            }
+                            if(i>0 && i<dim && j>0 && j<dim)
+                                if(yourBoard[i][j].getBackground().equals(Color.red))
+                                    return false;
                         }
                     }
                     break;
