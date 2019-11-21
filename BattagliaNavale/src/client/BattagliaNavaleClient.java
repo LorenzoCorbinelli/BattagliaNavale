@@ -85,8 +85,6 @@ public class BattagliaNavaleClient implements MouseListener, MouseMotionListener
         this.dim = dim;
         yourBoardPanel = new JPanel();
         opponentBoardPanel = new JPanel();
-        yourBoardPanel.addMouseListener(this);
-        opponentBoardPanel.addMouseListener(this);
         yourBoard = new Square[dim][dim];   
         opponentBoard = new Square[dim][dim];  
         messageLabel= new JLabel();
@@ -164,47 +162,42 @@ public class BattagliaNavaleClient implements MouseListener, MouseMotionListener
         System.out.println(yourBoard[1][1].getHeight() + " ," + yourBoard[1][1].getWidth());
         try 
         {
-            //ImageIcon image = new ImageIcon(ImageIO.read(BattagliaNavaleClient.class.getResource("exprosion.png")));
-            //explosion = new ImageIcon(getScaledImage(image,14,14));
-            explosion = scaleImage(new ImageIcon(ImageIO.read(BattagliaNavaleClient.class.getResource("exprosion.png"))),yourBoard[0][0].getWidth(),yourBoard[0][0].getHeight());
+            explosion = scaleImage(new ImageIcon(ImageIO.read(BattagliaNavaleClient.class.getResource("explosion.png"))),yourBoard[0][0].getWidth(),yourBoard[0][0].getHeight());
         } catch (IOException ex) {}
     }
 
     @Override
     public void mousePressed(MouseEvent e)
     {
-        if(e.getSource() instanceof  Square)
+        Square source = (Square)e.getSource();
+        
+        if(source.getParent().equals(yourBoardPanel))
         {
-            Square source = (Square)e.getSource();
-
-            if(source.getParent().equals(yourBoardPanel))
+            if(status.startsWith("INS"))
             {
-                if(status.startsWith("INS"))
+                if(selectedSquare == null)
                 {
-                    if(selectedSquare == null)
+                    source.setBackground(Color.blue);
+                    selectedSquare = source;
+                }
+                else
+                {
+                    mouseExited(e);
+                    if(selectedSquare.equals(source))
                     {
-                        source.setBackground(Color.blue);
-                        selectedSquare = source;
-                    }
-                    else
-                    {
-                        mouseExited(e);
-                        if(selectedSquare.equals(source))
-                        {
-                            selectedSquare = null;
-                            return;
-                        }
-                        insert(selectedSquare.x, selectedSquare.y, calcDir(selectedSquare, source));
                         selectedSquare = null;
+                        return;
                     }
+                    insert(selectedSquare.x, selectedSquare.y, calcDir(selectedSquare, source));
+                    selectedSquare = null;
                 }
             }
-            else if(source.getParent().equals(opponentBoardPanel))
+        }
+        else
+        {
+            if(status.equals("ATT"))
             {
-                if(status.equals("ATT"))
-                {
-                    attack(source.x, source.y);
-                }
+                attack(source.x, source.y);
             }
         }
     }
@@ -218,73 +211,70 @@ public class BattagliaNavaleClient implements MouseListener, MouseMotionListener
     @Override
     public void mouseEntered(MouseEvent e)  //TODO: Mancano controlli
     {
-        if(e.getSource() instanceof  Square)
+        mouseOverSquare = (Square) e.getSource();
+        if(mouseOverSquare.getParent().equals(yourBoardPanel))
+        //<editor-fold defaultstate="collapsed" desc="Mouse in yourField">
         {
-            mouseOverSquare = (Square) e.getSource();
-            if(mouseOverSquare.getParent().equals(yourBoardPanel))
-            //<editor-fold defaultstate="collapsed" desc="Mouse in yourField">
+            if(status.startsWith("INS"))
             {
-                if(status.startsWith("INS"))
+                if(selectedSquare == null)
+                    (mouseOverSquare).setBackground(Color.green);
+                else
                 {
-                    if(selectedSquare == null)
-                        (mouseOverSquare).setBackground(Color.green);
-                    else
+                    int len = Integer.parseInt(this.status.split(" ")[1]);
+                    char dir = calcDir(selectedSquare, mouseOverSquare);
+                    if(isInBounds(selectedSquare.x, selectedSquare.y, dir, len) && isPositionValid(selectedSquare.x, selectedSquare.y, dir, len))
                     {
-                        int len = Integer.parseInt(this.status.split(" ")[1]);
-                        char dir = calcDir(selectedSquare, mouseOverSquare);
-                        if(isInBounds(selectedSquare.x, selectedSquare.y, dir, len) && isPositionValid(selectedSquare.x, selectedSquare.y, dir, len))
+                        (mouseOverSquare).setBackground(Color.blue);
+                        switch(dir)
                         {
-                            (mouseOverSquare).setBackground(Color.blue);
-                            switch(dir)
-                            {
-                                case 'n':
-                                    for(int i = 0; i < len; i++)
-                                    {
-                                        yourBoard[selectedSquare.x][selectedSquare.y-i].setBackground(Color.red);
-                                    }
-                                    break;
-                                case 'w':
-                                    for(int i = 0; i < len; i++)
-                                    {
-                                        yourBoard[selectedSquare.x-i][selectedSquare.y].setBackground(Color.red);
-                                    }
-                                    break;
-                                case 's':
-                                    for(int i = 0; i < len; i++)
-                                    {
-                                        yourBoard[selectedSquare.x][selectedSquare.y+i].setBackground(Color.red);
-                                    }
-                                    break;
-                                case 'e':
-                                    for(int i = 0; i < len; i++)
-                                    {
-                                        yourBoard[selectedSquare.x+i][selectedSquare.y].setBackground(Color.red);
-                                    }
-                                    break;
-                            }
-                        }
-                        else
-                        {
-                            (mouseOverSquare).setBackground(Color.yellow);
+                            case 'n':
+                                for(int i = 0; i < len; i++)
+                                {
+                                    yourBoard[selectedSquare.x][selectedSquare.y-i].setBackground(Color.red);
+                                }
+                                break;
+                            case 'w':
+                                for(int i = 0; i < len; i++)
+                                {
+                                    yourBoard[selectedSquare.x-i][selectedSquare.y].setBackground(Color.red);
+                                }
+                                break;
+                            case 's':
+                                for(int i = 0; i < len; i++)
+                                {
+                                    yourBoard[selectedSquare.x][selectedSquare.y+i].setBackground(Color.red);
+                                }
+                                break;
+                            case 'e':
+                                for(int i = 0; i < len; i++)
+                                {
+                                    yourBoard[selectedSquare.x+i][selectedSquare.y].setBackground(Color.red);
+                                }
+                                break;
                         }
                     }
-                }
-                else
-                {
-                    (mouseOverSquare).setBackground(Color.gray);
+                    else
+                    {
+                        (mouseOverSquare).setBackground(Color.yellow);
+                    }
                 }
             }
-            //</editor-fold>
-            else if(mouseOverSquare.getParent().equals(opponentBoardPanel))
+            else
             {
-                if(status.startsWith("ATT"))
-                {
-                    mouseOverSquare.setBackground(Color.red);
-                }
-                else
-                {
-                    mouseOverSquare.setBackground(Color.gray);
-                }
+                (mouseOverSquare).setBackground(Color.gray);
+            }
+        }
+        //</editor-fold>
+        else
+        {
+            if(status.startsWith("ATT"))
+            {
+                mouseOverSquare.setBackground(Color.red);
+            }
+            else
+            {
+                mouseOverSquare.setBackground(Color.gray);
             }
         }
     }
@@ -292,55 +282,49 @@ public class BattagliaNavaleClient implements MouseListener, MouseMotionListener
     @Override
     public void mouseExited(MouseEvent e)   //TODO: Mancano controlli
     {
-        if(e.getSource() instanceof  Square)
+        mouseOverSquare = null;
+        Square source = (Square)e.getSource();
+        source.resetColor();
+        if(source.getParent().equals(yourBoardPanel))
         {
-            Square source = ((Square)e.getSource());
-            source.resetColor();
-            if(source.getParent().equals(yourBoardPanel))
+            if(status.startsWith("INS"))
             {
-                if(status.startsWith("INS"))
+                if(selectedSquare != null)
                 {
-                    if(selectedSquare != null)
+                    int len = Integer.parseInt(status.split(" ")[1]);
+                    switch(calcDir(selectedSquare, source))
                     {
-                        int len = Integer.parseInt(status.split(" ")[1]);
-                        switch(calcDir(selectedSquare, source))
-                        {
-                            case 'n':
-                                for(int i = 0; i < len; i++)
-                                {
-                                    if(selectedSquare.y-i>=0)
-                                        yourBoard[selectedSquare.x][selectedSquare.y-i].resetColor();
-                                }
-                            break;
-                            case 'w':
-                                for(int i = 0; i < len; i++)
-                                {
-                                    if(selectedSquare.x-i>=0)
-                                        yourBoard[selectedSquare.x-i][selectedSquare.y].resetColor();
-                                }
-                            break;
-                            case 's':
-                                for(int i = 0; i < len; i++)
-                                {
-                                    if(selectedSquare.y+i<dim)
-                                        yourBoard[selectedSquare.x][selectedSquare.y+i].resetColor();
-                                }
-                            break;
-                            case 'e':
-                                for(int i = 0; i < len; i++)
-                                {
-                                    if(selectedSquare.x+i<dim)
-                                        yourBoard[selectedSquare.x+i][selectedSquare.y].resetColor();
-                                }
-                            break;
-                        }
+                        case 'n':
+                            for(int i = 0; i < len; i++)
+                            {
+                                if(selectedSquare.y-i>=0)
+                                    yourBoard[selectedSquare.x][selectedSquare.y-i].resetColor();
+                            }
+                        break;
+                        case 'w':
+                            for(int i = 0; i < len; i++)
+                            {
+                                if(selectedSquare.x-i>=0)
+                                    yourBoard[selectedSquare.x-i][selectedSquare.y].resetColor();
+                            }
+                        break;
+                        case 's':
+                            for(int i = 0; i < len; i++)
+                            {
+                                if(selectedSquare.y+i<dim)
+                                    yourBoard[selectedSquare.x][selectedSquare.y+i].resetColor();
+                            }
+                        break;
+                        case 'e':
+                            for(int i = 0; i < len; i++)
+                            {
+                                if(selectedSquare.x+i<dim)
+                                    yourBoard[selectedSquare.x+i][selectedSquare.y].resetColor();
+                            }
+                        break;
                     }
                 }
             }
-        }
-        else if(e.getSource().equals(yourBoardPanel) || e.getSource().equals(opponentBoardPanel))
-        {
-            mouseOverSquare = null;
         }
     }
     
@@ -422,7 +406,7 @@ public class BattagliaNavaleClient implements MouseListener, MouseMotionListener
                     {
                         for(int j = y + 1; j >= y - len; j--)
                         {
-                            if(i>0 && i<dim && j>0 && j<dim)
+                            if(i>=0 && i<dim && j>=0 && j<dim)
                                 if(yourBoard[i][j].getBackground().equals(Color.red))
                                     return false;
                         }
@@ -433,7 +417,7 @@ public class BattagliaNavaleClient implements MouseListener, MouseMotionListener
                     {
                         for(int j = y - 1; j <= y + 1; j++)
                         {
-                            if(i>0 && i<dim && j>0 && j<dim)
+                            if(i>=0 && i<dim && j>=0 && j<dim)
                                 if(yourBoard[i][j].getBackground().equals(Color.red))
                                     return false;
                         }
@@ -444,7 +428,7 @@ public class BattagliaNavaleClient implements MouseListener, MouseMotionListener
                     {
                         for(int j = y - 1; j <= y + len; j++)
                         {
-                            if(i>0 && i<dim && j>0 && j<dim)
+                            if(i>=0 && i<dim && j>=0 && j<dim)
                                 if(yourBoard[i][j].getBackground().equals(Color.red))
                                     return false;
                         }
@@ -455,7 +439,7 @@ public class BattagliaNavaleClient implements MouseListener, MouseMotionListener
                     {
                         for(int j = y - 1; j <= y + 1; j++)
                         {
-                            if(i>0 && i<dim && j>0 && j<dim)
+                            if(i>=0 && i<dim && j>=0 && j<dim)
                                 if(yourBoard[i][j].getBackground().equals(Color.red))
                                     return false;
                         }
