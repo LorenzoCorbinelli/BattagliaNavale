@@ -538,7 +538,13 @@ public class BattagliaNavaleClient implements MouseListener, MouseMotionListener
         messageLabel.setText(err);
         messageLabel.setForeground(Color.red);
     }
-
+    
+    void drawNotHit(int x, int y)
+    {
+        opponentBoard[x][y].setColor(Color.GREEN);
+        opponentBoard[x][y].setBackground(Color.GREEN);
+    }
+    
     @Override
     public void mouseDragged(MouseEvent e) {} //Unused
 

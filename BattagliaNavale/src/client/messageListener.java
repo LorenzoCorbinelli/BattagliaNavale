@@ -104,6 +104,9 @@ public class messageListener implements Runnable
                 case "LOS":
                     client.setText("Oh no! Hai perso!");
                     break;
+                case "SNH": //Ships Not Hhit
+                    client.drawNotHit(Integer.parseInt(command[1]), Integer.parseInt(command[2]));
+                    break;
                 case "BRD":
                     String comm = input.nextLine();
                     ArrayList<String> brd = new ArrayList<>();

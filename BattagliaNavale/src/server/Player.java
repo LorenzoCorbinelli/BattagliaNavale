@@ -315,6 +315,7 @@ public class Player implements Runnable
                 avversario.listener.send("END");
             }
         }while(partita.inProgress);
+        NotHit();
         System.out.println("Aight, Imma head out");
     }
 
@@ -323,16 +324,27 @@ public class Player implements Runnable
         for(Nave n : avversario.navi)
         {
             if (!n.affondata)
-                return;
+               return;
         }
         win();
         partita.inProgress=false;
     }
-
+    
+    private void NotHit()   //ships not hit
+    {
+        for(Nave n : navi)
+        {
+            for(Pezzo P : n.pezzi)
+            {
+                if(!P.colpito)
+                    avversario.listener.send("SNH " + P.x + " " + P.y);
+            }
+        }
+    }
+    
     private void win() 
     {
         listener.send("WIN");
         avversario.listener.send("LOS");
     }
-    
 }
