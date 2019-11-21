@@ -121,10 +121,20 @@ public class Player implements Runnable
     {
             String[] c = listener.getCommand().split(" "); //declaration of a new variable that was initialized with coordinates and direction of the boat 
             System.out.println(Arrays.toString(c)); //print in terminal the array like a string
-            int x = Integer.parseInt(c[0]); //declaration of a new variable x for coordinateX that was initialized with the value in c[0] modulation with the dimensions of the player's court
-            int y = Integer.parseInt(c[1]);  //declaration of a new variable x for coordinateX that was initialized with the value in c[0] divided by the dimensions of the player's court
+            boolean check;
+            try
+            {
+                int x = Integer.parseInt(c[0]); //declaration of a new variable x for coordinateX that was initialized with the value in c[0] modulation with the dimensions of the player's court
+                int y = Integer.parseInt(c[1]);  //declaration of a new variable x for coordinateX that was initialized with the value in c[0] divided by the dimensions of the player's court
+                check = controllaNave(x, y, c[2].charAt(0), len);
+            }
+            catch (Exception e)
+            {
+                listener.send("ERR Malformed command!");
+                return false;
+            }
             //AGGIUNGERE CONTROLLI
-            if(controllaNave(x, y, c[2].charAt(0), len)) //check if the method controlloNave returns true //x,y,direzione,lunghezza
+            if(check) //check if the method controlloNave returns true //x,y,direzione,lunghezza
             {
                 for(Nave n : navi) 
                 {
@@ -226,12 +236,19 @@ public class Player implements Runnable
                         listener.send("MSG È il tuo turno");
                         String[] c = listener.getCommand().split(" "); //declaration of a new variable that was initialized with coordinates and direction of the boat 
                         System.out.println(Arrays.toString(c)); //print in terminal the array like a string
-                        x = Integer.parseInt(c[0]); //declaration of a new variable x for coordinateX that was initialized with the value in c[0] modulation with the dimensions of the player's court
-                        y = Integer.parseInt(c[1]);  //declaration of a new variable x for coordinateX that was initialized with the value in c[0] divided by the dimensions of the player's court
-
-                        invalidPos = moves.contains(new Position(x,y));
-                        if(invalidPos)
-                            listener.send("ERR Hai già attaccato in questo punto");
+                        
+                        try
+                        {
+                            x = Integer.parseInt(c[0]); //declaration of a new variable x for coordinateX that was initialized with the value in c[0] modulation with the dimensions of the player's court
+                            y = Integer.parseInt(c[1]);  //declaration of a new variable x for coordinateX that was initialized with the value in c[0] divided by the dimensions of the player's court
+                            invalidPos = moves.contains(new Position(x,y));
+                            if(invalidPos)
+                                listener.send("ERR Hai già attaccato in questo punto");
+                        }catch(Exception e)
+                        {
+                            listener.send("ERR Malformed command!");
+                            invalidPos = true;
+                        }
                     }while (invalidPos);
                     
                     //AGGIUNGERE CONTROLLI

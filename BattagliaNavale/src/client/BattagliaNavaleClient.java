@@ -196,7 +196,7 @@ public class BattagliaNavaleClient implements MouseListener, MouseMotionListener
         }
         else
         {
-            //if(status.equals("ATT"))
+            if(status.equals("ATT"))
             {
                 attack(source.x, source.y);
             }
