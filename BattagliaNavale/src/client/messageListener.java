@@ -104,12 +104,6 @@ public class messageListener implements Runnable
                 case "LOS":
                     client.setText("Oh no! Hai perso!");
                     break;
-                case "STP":
-                    client.stopUpdate();
-                    break;
-                case "GO":
-                    client.resetUpdate();
-                    break;
                 case "BRD":
                     String comm = input.nextLine();
                     ArrayList<String> brd = new ArrayList<>();

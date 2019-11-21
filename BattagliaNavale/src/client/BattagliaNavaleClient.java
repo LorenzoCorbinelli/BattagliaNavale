@@ -9,8 +9,6 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -294,6 +292,7 @@ public class BattagliaNavaleClient implements MouseListener, MouseMotionListener
     {
         Square source = (Square)e.getSource();
         source.resetColor();
+        mouseOverSquare = null;
         if(source.getParent().equals(yourBoardPanel))
         {
             if(status.startsWith("INS"))
@@ -339,10 +338,6 @@ public class BattagliaNavaleClient implements MouseListener, MouseMotionListener
                     }
                 }
             }
-        }
-        else
-        {
-            
         }
     }
     
