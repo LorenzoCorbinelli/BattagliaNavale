@@ -236,6 +236,8 @@ public class Player implements Runnable
                     }while (invalidPos);
 
                     //AGGIUNGERE CONTROLLI
+                    listener.send("BRD");
+                    avversario.listener.send("BRD");
                     for (Nave n : avversario.navi)
                     {
                         if(!n.affondata)
@@ -291,6 +293,8 @@ public class Player implements Runnable
                     checkWin();
 
                     moves.add(new Position(x,y));
+                    listener.send("END");
+                    avversario.listener.send("END");
                 }while(hit && partita.inProgress);
             }
             
@@ -304,12 +308,17 @@ public class Player implements Runnable
 
                 opponentTurn.release();
             }
+            else
+            {
+                listener.send("END");
+                avversario.listener.send("END");
+            }
         }while(partita.inProgress);
         NotHit();
         System.out.println("Aight, Imma head out");
     }
-    
-    private void checkWin()
+
+    private synchronized void checkWin()
     {
         for(Nave n : avversario.navi)
         {
