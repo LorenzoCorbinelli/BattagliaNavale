@@ -7,9 +7,10 @@ import java.awt.GridLayout;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -87,7 +88,7 @@ public class BattagliaNavaleClient implements MouseListener, MouseMotionListener
     }
     
     public void setup(int dim)
-    {
+    { 
         this.dim = dim;
         yourBoardPanel = new JPanel();
         opponentBoardPanel = new JPanel();
@@ -592,6 +593,29 @@ public class BattagliaNavaleClient implements MouseListener, MouseMotionListener
             else
             {
                 face.setText("(｡◕‿◕｡)");
+            }
+        }
+    }
+
+    void drawBoard(ArrayList<String> board)
+    {
+        for(String s : board)
+        {
+            String[] command = s.split(" ");
+            switch(command[0])
+            {
+                case "HIT": //Hit
+                    drawHit(Integer.parseInt(command[1]), Integer.parseInt(command[2]));
+                    break;
+                case "WAT": //Water
+                    drawWater(Integer.parseInt(command[1]), Integer.parseInt(command[2]));
+                    break;
+                case "THY": //They Hit You
+                    drawOppHit(Integer.parseInt(command[1]), Integer.parseInt(command[2]));
+                    break;
+                case "THW": //They Hit Water
+                    drawOppHitWater(Integer.parseInt(command[1]), Integer.parseInt(command[2]));
+                    break;
             }
         }
     }
