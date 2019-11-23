@@ -31,21 +31,30 @@ Il **client** dovrà:
  
 ## Lavoro svolto
 
-Il gioco è stato diviso in tre cartelle: 
+Il gioco è stato diviso in tre packages: 
 - *BattagliaNavale*
 - *Client*
 - *Server*
 
-### BattagliaNavale folder
+### BattagliaNavale package
 
 È presente il file **BattagliaNavale.java** che *gestisce l'avvio del server* in locale e la *connessione da parte di due client*. 
-Per l'esecuzione del file come server, sarà necessario utilizzare il seguente comando nel *cmd* su linux: 
+
+### Client package
+
+### Server package
+
+##
+
+## Deployment
+
+Per l'esecuzione del file BattagliaNavale.java come server, sarà necessario utilizzare il seguente comando nel *terminale* su **linux**: 
 ```
 javac BattagliaNavale.java && java BattagliaNavale -server
 ```
-Per poter eseguire da cmd su Windows sarà necessario 
+Per poter eseguire da *cmd* su **Windows** sarà necessario 
 ```
-clean and built project button 
+clean and built project button on NetBeans
 ```
 il quale restiturirà un percorso che, se inserito nel *cmd* potrà permettere l'esecuzione del client. 
 
@@ -55,31 +64,27 @@ Building jar: C:\Users\yourUser\BattagliaNavale\BattagliaNavale\dist\BattagliaNa
 To run this application from the command line without Ant, try:
 java -jar "C:\Users\yourUser\BattagliaNavale\BattagliaNavale\dist\BattagliaNavale.jar"
 ```
-### Esecuzione cmd server
-```
-"C:\Users\yourUser\BattagliaNavale\BattagliaNavale\dist\BattagliaNavale.jar" -server
-```
-### Esecuzione cmd client
-```
-"C:\Users\yourUser\BattagliaNavale\BattagliaNavale\dist\BattagliaNavale.jar"
-```
+### Esecuzione cmd server (Windows)
 Per l'esecuzione del server dorvà essere aggiunto '-server'
-
-### Client folder
-
-### Server folder
-
-##
-
-## Deployment
-
-Add additional notes about how to deploy this on a live system
-
+```
+java -jar "C:\Users\yourUser\BattagliaNavale\BattagliaNavale\dist\BattagliaNavale.jar" -server
+```
+### Esecuzione cmd server (Linux)
+Per l'esecuzione del server dorvà essere aggiunto '-server'
+```
+javac BattagliaNavale.java && java BattagliaNavale -server
+```
+### Esecuzione cmd client (Windows)
+```
+java -jar "C:\Users\yourUser\BattagliaNavale\BattagliaNavale\dist\BattagliaNavale.jar"
+```
+### Esecuzione cmd client (Linux)
+```
+javac BattagliaNavale.java && java BattagliaNavale
+```
 ## Built With
 
-* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
-* [Maven](https://maven.apache.org/) - Dependency Management
-* [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
+* [Netbeans](https://netbeans.apache.org/download/)
 
 ## Versioning
 
