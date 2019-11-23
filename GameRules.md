@@ -14,8 +14,13 @@ Il primo giocatore che terminerà il posizionamento delle navi dovrà aspettare 
 
 ### **Svolgimento**
 Ciascun giocatore, a turno, selezionando le singole caselle deve colpire la flotta dell’avversario.
+
 Il turno sarà indicato in basso a sinistra della propria interfaccia grafica.
+
 Se il giocatore colpisce una delle navi dell'avversario, potrà continuare a sparare altrimenti il turno passerà all'avversario.
+
 Chi riesce ad affondare tutte le navi dell’avversario per primo vince la partita.
+
 Al termine della partita, al perdente, verranno mostrate le navi avversarie non ancora affondate.
+
 Sarà possibile, per entrambi i giocatori, cominciare una nuova partita tramite l'apposito menù.
