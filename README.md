@@ -42,9 +42,20 @@ Il gioco è stato diviso in tre packages:
 
 ### Client package
 
+Sono presenti i seguenti file:
+- **BattagliaNavaleClient.java** che corrisponde all'*intefaccia del gioco* e contiene i metodi per poter far interagire il client con l'interfaccia stessa;
+- **Square.java** che corrisponde all'estensione della classe *JPanel*, utilizzata per la creazione dei quadretti del campo di gioco;
+- **MessageListener.java** che corrisponde all'estensione della classe *Runnable*. È un *thread* che gestisce la comunicazione tra client e server, comunicando attraverso codici prestabili.
+
 ### Server package
 
-##
+Sono presenti i seguenti file:
+- **Listener.java** che corrisponde all'estensione della classe *Runnable*.
+- **Nave.java** che corrisponde alla classe che contiene i pezzi per la creazione e la composizione di una nave e il controllo sull'affondamento;
+- **Partita.java** che corrisponde alla classe che permette la connessione del client al server, all'interno della quale viene inizializzata l'interfaccia grafica;
+- **Pezzo.java** che corrisponde alla classe che contiene le informazioni relative ad ogni singolo pezzo della nave;
+- **Player.java** che corrisponde all'estensione della classe *Runnable*. È un thread che identifica il singolo giocatore e si occupa della gestione dell'inserimento delle navi e dell'attacco, compreso di controlli sulla tipologia di attacco (acqua/nave e se questo attacco ha portato alla vittoria da parte del giocatore stesso);
+- **Position.java** che corrisponde alla classe che controlla se il pezzo colpito è nave o no.
 
 ## Deployment
 
@@ -85,10 +96,6 @@ javac BattagliaNavale.java && java BattagliaNavale
 ## Built With
 
 * [Netbeans](https://netbeans.apache.org/download/)
-
-## Versioning
-
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags). 
 
 ## Autori
 
