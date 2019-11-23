@@ -8,6 +8,7 @@ La flotta di ciascun giocatore è composta da 7 navi di diversa dimensione:
 - 2 navi da 3 posti
 - 1 nave da 4 posti
 - 1 nave da 5 posti
+
 Ciascun giocatore a turno colloca le proprie navi, fino a quando sono tutte e 7 posizionate.
 Il primo giocatore che terminerà il posizionamento delle navi dovrà aspettare che anche l'avversario abbia terminato.
 
