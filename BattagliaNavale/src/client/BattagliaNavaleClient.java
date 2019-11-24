@@ -66,6 +66,7 @@ public class BattagliaNavaleClient implements MouseListener, MouseMotionListener
     {
         status = "WAT";
         frame = new JFrame("Ultimate Battleship");
+        frame.setIconImage(new ImageIcon(getClass().getResource("Ship2.png")).getImage());
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setPreferredSize(new Dimension(1024, 490));
         frame.setVisible(true);
