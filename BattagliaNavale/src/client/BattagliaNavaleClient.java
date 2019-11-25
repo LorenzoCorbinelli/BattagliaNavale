@@ -33,7 +33,13 @@ public class BattagliaNavaleClient implements MouseListener, MouseMotionListener
     private int dim;
     private ImageIcon explosion;
     private final messageListener listener; //Using threads comes with HUGE problems, like race conditions. They shuoldn'y cause many problems in this application, thus they're not checked (yet)
-
+    private JPanel shipsPanel;
+    private JPanel[][] ships;
+    Border border = BorderFactory.createMatteBorder(1, 1, 0, 0, Color.black);
+    Border bottomBorder = BorderFactory.createMatteBorder(1, 1, 1, 0, Color.black);
+    Border rightBorder = BorderFactory.createMatteBorder(1, 1, 0, 1, Color.black);
+    Border cornerBorder = BorderFactory.createMatteBorder(1, 1, 1, 1, Color.black);
+    
     public void setStatus(String status)
     {
         this.status = status;
@@ -81,6 +87,43 @@ public class BattagliaNavaleClient implements MouseListener, MouseMotionListener
         listener = new messageListener(serverAddress, this);
     }
     
+    public void elencoNavi(ArrayList <String> dim)
+    {
+        shipsPanel = new JPanel();
+        ships = new JPanel[6][7];  
+        shipsPanel.setLayout(new GridLayout(7, 6,0,0));
+        
+      //  shipsPanel.setPreferredSize(new Dimension(100,120));
+      for(int i=0;i<dim.size();i++)
+      {
+          for(int j=0;j<(Integer.parseInt(dim.get(i))+1);j++)
+          {
+              if(j==Integer.parseInt(dim.get(i)))
+              {
+                  ships[j][i] = new JPanel();
+                  ships[j][i].add(new JLabel("←"));
+              }
+              else
+              {
+                    ships[j][i]=new JPanel();
+                    if(i==6&&j==Integer.parseInt(dim.get(i))-1)
+                        ships[j][i].setBorder(cornerBorder);
+                    else if(i==6)
+                        ships[j][i].setBorder(bottomBorder);
+                    else if(j==Integer.parseInt(dim.get(i))-1)
+                        ships[j][i].setBorder(rightBorder);
+                    else
+                        ships[j][i].setBorder(border);
+              }
+              ships[j][i].setBackground(Color.red);
+              shipsPanel.add(ships[j][i]);
+              System.out.println("J: "+j);
+              System.out.println("I: "+i);
+          }
+      }
+      frame.getContentPane().add(shipsPanel,BorderLayout.CENTER);
+    }
+    
     public void setup(int dim)
     { 
         this.dim = dim;
@@ -91,12 +134,9 @@ public class BattagliaNavaleClient implements MouseListener, MouseMotionListener
         messageLabel= new JLabel();
         yourBoardPanel.setLayout(new GridLayout(dim+2, dim+2,0,0));
         opponentBoardPanel.setLayout(new GridLayout(dim+2, dim+2,0,0));
-        Border border = BorderFactory.createMatteBorder(1, 1, 0, 0, Color.black);
-        Border bottomBorder = BorderFactory.createMatteBorder(1, 1, 1, 0, Color.black);
-        Border rightBorder = BorderFactory.createMatteBorder(1, 1, 0, 1, Color.black);
-        Border cornerBorder = BorderFactory.createMatteBorder(1, 1, 1, 1, Color.black);
-        face = new JLabel("(·‿·)", JLabel.CENTER);
         
+        face = new JLabel("(·‿·)", JLabel.CENTER);
+
         for (int j = -1; j < dim+1; j++)
         {
             for (int i = -1; i < dim+1; i++)
@@ -155,7 +195,8 @@ public class BattagliaNavaleClient implements MouseListener, MouseMotionListener
         frame.getContentPane().add(messageLabel, BorderLayout.SOUTH);
         frame.getContentPane().add(yourBoardPanel, BorderLayout.WEST);
         frame.getContentPane().add(opponentBoardPanel, BorderLayout.EAST);
-        frame.getContentPane().add(face, BorderLayout.CENTER);
+      //  frame.getContentPane().add(face, BorderLayout.CENTER);
+        
         messageLabel.setText("Praise the sun");
         frame.pack();
         frame.addMouseMotionListener(this);

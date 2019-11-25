@@ -118,6 +118,20 @@ public class messageListener implements Runnable
                     }
                     client.drawBoard(brd);
                     break;
+                case "SHL":
+                    String [] s;
+                    ArrayList<String> dim = new ArrayList<>();
+                    dim.add(command[1]);
+                    String com = input.nextLine();
+                    while(!com.equals("END"))
+                    {
+                        s = com.split(" ");
+                        System.out.println(com);
+                        dim.add(s[1]);
+                        com=input.nextLine();
+                    }
+                    client.elencoNavi(dim);
+                    break;
             }
         }
     }
