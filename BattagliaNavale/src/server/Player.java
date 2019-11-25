@@ -37,6 +37,7 @@ public class Player implements Runnable
     public void run() //run's method
     {
         Setup(); //call the setup's method
+        elencoNavi();
         inserisciNavi(); //call the inserisciNavi's method
     }
     
@@ -62,7 +63,27 @@ public class Player implements Runnable
             }
         }
     }
-
+    
+    private void elencoNavi()
+    {
+        int i = 0;
+        
+        while(i < 3)
+        {
+            listener.send("SHL 2");
+            i++;
+        }
+        i = 0;
+        while(i < 2)
+        {
+            listener.send("SHL 3");
+            i++;
+        }
+        listener.send("SHL 4");
+        listener.send("SHL 5");
+        listener.send("END");
+    }
+    
     private void inserisciNavi() //inserisciNavi's method
     {
         int i = 0;  //declaration of an integer variable with a fixed value (0)
