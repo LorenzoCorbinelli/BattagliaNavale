@@ -68,8 +68,19 @@ public class messageListener implements Runnable
             System.out.println(Arrays.toString(command));
             switch(command[0])
             {
-                case "DIM": //Dimensions
-                    client.setup(Integer.parseInt(command[1]));
+                case "STP": //Setup
+                    String [] s;
+                    ArrayList<String> dim = new ArrayList<>();
+                    int griglia = Integer.parseInt(input.nextLine().split(" ")[1]);
+                    String com = input.nextLine();
+                    while(!com.equals("END"))
+                    {
+                        s = com.split(" ");
+                        System.out.println(com);
+                        dim.add(s[1]);
+                        com=input.nextLine();
+                    }
+                    client.setup(griglia,dim);
                     break;
                 case "MSG": //Message
                     client.setText(reassCommand(command));
@@ -118,19 +129,8 @@ public class messageListener implements Runnable
                     }
                     client.drawBoard(brd);
                     break;
-                case "SHL":
-                    String [] s;
-                    ArrayList<String> dim = new ArrayList<>();
-                    dim.add(command[1]);
-                    String com = input.nextLine();
-                    while(!com.equals("END"))
-                    {
-                        s = com.split(" ");
-                        System.out.println(com);
-                        dim.add(s[1]);
-                        com=input.nextLine();
-                    }
-                    client.elencoNavi(dim);
+                case "OKI":
+                    client.setSelectedShip();
                     break;
             }
         }

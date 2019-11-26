@@ -37,14 +37,14 @@ public class Player implements Runnable
     public void run() //run's method
     {
         Setup(); //call the setup's method
-        elencoNavi();
         inserisciNavi(); //call the inserisciNavi's method
     }
     
     private void Setup() //Setup's method
     {
-        listener.send("DIM " + partita.getDimensioneCampo()); //print a new line in output with the dimensions of the player's court
-        
+        listener.send("STP"); //print a new line in output with the dimensions of the player's court
+        listener.send("DIM " + partita.getDimensioneCampo());
+        elencoNavi();
         if(partita.currentPlayer == null) //check if the local variable currentPlayer was null
         {
             partita.currentPlayer = this; //this object was assigned to local variable currentPlayer
@@ -164,6 +164,7 @@ public class Player implements Runnable
                         listener.send("PIE " + p.x + ' ' + p.y);
                     }
                 }
+                listener.send("OKI");
                 return true;
             }
             else
