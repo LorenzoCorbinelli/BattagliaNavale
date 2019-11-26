@@ -18,7 +18,7 @@ public final class BattagliaNavaleClient implements MouseListener, MouseMotionLi
     private JPanel opponentBoardPanel;
     private JLabel messageLabel;
     private JPanel shipsPanel;
-    private final JPanel centralPanel;
+    private JPanel centralPanel;
     private JPanel facePanel;
     private Square[][] yourBoard;
     private Square[][] opponentBoard;
@@ -129,11 +129,11 @@ public final class BattagliaNavaleClient implements MouseListener, MouseMotionLi
       }
       centralPanel.add(shipsPanel,BorderLayout.NORTH);
       frame.pack();
-        int hPadding = shipsPanel.getWidth()-16*6;
-        int vPadding = shipsPanel.getHeight()-16*dim.size();
-        System.out.println(shipsPanel.getWidth());
-        System.out.println(shipsPanel.getHeight());
-        shipsPanel.setBorder(BorderFactory.createMatteBorder(hPadding/2,vPadding/2,hPadding/2,vPadding/2,frame.getBackground()));
+    int hPadding = shipsPanel.getWidth()-(16*6);
+    int vPadding = shipsPanel.getHeight()-(16*dim.size());
+    System.out.println(shipsPanel.getWidth() + " - " + 16*6 + " = " + hPadding);
+    System.out.println(shipsPanel.getHeight() + " - " + 16*dim.size() + " = " + vPadding);
+    shipsPanel.setBorder(BorderFactory.createMatteBorder(hPadding/2,vPadding/2,hPadding/2,vPadding/2,frame.getBackground()));
     }
     
     public void setSelectedShip()
@@ -157,7 +157,6 @@ public final class BattagliaNavaleClient implements MouseListener, MouseMotionLi
     
     public void setup(int dim, ArrayList<String> shipsDim)
     { 
-        elencoNavi(shipsDim);
         this.dim = dim;
         yourBoardPanel = new JPanel();
         opponentBoardPanel = new JPanel();
@@ -232,16 +231,16 @@ public final class BattagliaNavaleClient implements MouseListener, MouseMotionLi
         messageLabel.setText("Praise the sun");
         facePanel.add(face);
         centralPanel.add(facePanel, BorderLayout.CENTER);
-        face.setSize(face.getPreferredSize());
-        frame.pack();
-        face.setLocation(facePanel.getWidth()/2-(int)face.getPreferredSize().getWidth()/2,(frame.getHeight()/2)-facePanel.getY()-(int)face.getPreferredSize().getHeight());
         frame.addMouseMotionListener(this);
-        System.out.println(yourBoardPanel.getHeight() + " ," + yourBoardPanel.getWidth());
-        System.out.println(yourBoard[1][1].getHeight() + " ," + yourBoard[1][1].getWidth());
         try 
         {
             explosion = scaleImage(new ImageIcon(ImageIO.read(BattagliaNavaleClient.class.getResource("explosion.png"))),yourBoard[0][0].getWidth(),yourBoard[0][0].getHeight());
         } catch (IOException ex) {}
+        elencoNavi(shipsDim);
+        
+        face.setSize(face.getPreferredSize());
+        frame.pack();
+        face.setLocation(facePanel.getWidth()/2-(int)face.getPreferredSize().getWidth()/2,(frame.getHeight()/2)-facePanel.getY()-(int)face.getPreferredSize().getHeight()-menuBar.getHeight());
     }
 
     @Override
@@ -579,11 +578,11 @@ public final class BattagliaNavaleClient implements MouseListener, MouseMotionLi
     {
         if(e.getXOnScreen() < frame.getX() + (frame.getWidth() / 2.34))
         {  
-            if(e.getYOnScreen() < frame.getY() + (frame.getHeight() / 2.69))
+            if(e.getYOnScreen() < frame.getY() + (frame.getHeight() / 2.69))  //Needs to be recalibrated
             {
                 face.setText("('◡' )");
             }
-            else if(e.getYOnScreen() > frame.getY() + (frame.getHeight() / 1.68))
+            else if(e.getYOnScreen() > frame.getY() + (frame.getHeight() / 1.68))  //Needs to be recalibrated
             {
                 face.setText("(.‿. )");
             }
@@ -594,11 +593,11 @@ public final class BattagliaNavaleClient implements MouseListener, MouseMotionLi
         }
         else if(e.getXOnScreen() > frame.getX() + (frame.getWidth()/1.75))
         {
-            if(e.getYOnScreen() < frame.getY() + (frame.getHeight() / 2.69))
+            if(e.getYOnScreen() < frame.getY() + (frame.getHeight() / 2.69))  //Needs to be recalibrated
             {
                 face.setText("( '◡')");
             }
-            else if(e.getYOnScreen() > frame.getY() + (frame.getHeight() / 1.68))
+            else if(e.getYOnScreen() > frame.getY() + (frame.getHeight() / 1.68))  //Needs to be recalibrated
             {
                 face.setText("( .‿.)");
             }
@@ -609,11 +608,11 @@ public final class BattagliaNavaleClient implements MouseListener, MouseMotionLi
         }
         else
         {
-            if(e.getYOnScreen() < frame.getY() + (frame.getHeight()/2.69))
+            if(e.getYOnScreen() < frame.getY() + (frame.getHeight()/2.69))  //Needs to be recalibrated
             {
                 face.setText("('◡')");
             }
-            else if(e.getYOnScreen() > frame.getY() + (frame.getHeight()/1.68))
+            else if(e.getYOnScreen() > frame.getY() + (frame.getHeight()/1.68))  //Needs to be recalibrated
             {
                 face.setText("(.‿.)");
             }
@@ -624,7 +623,7 @@ public final class BattagliaNavaleClient implements MouseListener, MouseMotionLi
         }
         face.setSize(face.getPreferredSize());
         frame.pack();
-        face.setLocation(facePanel.getWidth()/2-(int)face.getPreferredSize().getWidth()/2,(frame.getHeight()/2)-facePanel.getY()-(int)face.getPreferredSize().getHeight());
+        face.setLocation(facePanel.getWidth()/2-(int)face.getPreferredSize().getWidth()/2,(frame.getHeight()/2)-facePanel.getY()-(int)face.getPreferredSize().getHeight()-menuBar.getHeight());
     }
 
     void drawBoard(ArrayList<String> board)
