@@ -1,31 +1,25 @@
 package client;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.GridLayout;
-import java.awt.Image;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
+import java.awt.*;
+import java.awt.event.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import javax.imageio.ImageIO;
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
+import javax.swing.*;
 import javax.swing.border.Border;
 
-public class BattagliaNavaleClient implements MouseListener, MouseMotionListener
+public final class BattagliaNavaleClient implements MouseListener, MouseMotionListener
 {
     private final JFrame frame;
+    private final JMenuBar menuBar;
+    private JPanel[][] ships;
     private JLabel face;
     private JPanel yourBoardPanel;
     private JPanel opponentBoardPanel;
     private JLabel messageLabel;
+    private JPanel shipsPanel;
+    private final JPanel centralPanel;
+    private JPanel facePanel;
     private Square[][] yourBoard;
     private Square[][] opponentBoard;
     private Square mouseOverSquare;
@@ -34,15 +28,11 @@ public class BattagliaNavaleClient implements MouseListener, MouseMotionListener
     private int dim;
     private ImageIcon explosion;
     private final messageListener listener; //Using threads comes with HUGE problems, like race conditions. They shuoldn'y cause many problems in this application, thus they're not checked (yet)
-    private JPanel shipsPanel;
-    private JPanel[][] ships;
-    private JPanel center;
-    private JPanel facePanel;
     private int selectedShip = 0;
-    Border border = BorderFactory.createMatteBorder(1, 1, 0, 0, Color.black);
-    Border bottomBorder = BorderFactory.createMatteBorder(1, 1, 1, 0, Color.black);
-    Border rightBorder = BorderFactory.createMatteBorder(1, 1, 0, 1, Color.black);
-    Border cornerBorder = BorderFactory.createMatteBorder(1, 1, 1, 1, Color.black);
+    private final Border tlBorder = BorderFactory.createMatteBorder(1, 1, 0, 0, Color.black);
+    private final Border tlbBorder = BorderFactory.createMatteBorder(1, 1, 1, 0, Color.black);
+    private final Border tlrBorder = BorderFactory.createMatteBorder(1, 1, 0, 1, Color.black);
+    private final Border tlbrBorder = BorderFactory.createMatteBorder(1, 1, 1, 1, Color.black);
     
     public void setStatus(String status)
     {
@@ -75,9 +65,19 @@ public class BattagliaNavaleClient implements MouseListener, MouseMotionListener
     public BattagliaNavaleClient(String serverAddress)
     {
         status = "WAT";
-        center = new JPanel(new BorderLayout());
+        centralPanel = new JPanel(new BorderLayout());
+        menuBar = new JMenuBar();
+        JMenu fileMenu = new JMenu("File");
+        JMenu helpMenu = new JMenu("Help");
+        
+        menuBar.add(fileMenu);
+        menuBar.add(helpMenu);
+        ArrayList<Image> icons = new ArrayList<>();
+        icons.add(scaleImage(new ImageIcon(getClass().getResource("icona.png")),16,16).getImage());
+        icons.add(scaleImage(new ImageIcon(getClass().getResource("icona.png")),64,64).getImage());
+        icons.add(scaleImage(new ImageIcon(getClass().getResource("icona.png")),128,128).getImage());
         frame = new JFrame("Ultimate Battleship");
-        frame.setIconImage(new ImageIcon(getClass().getResource("Ship2.png")).getImage());
+        frame.setIconImages(icons);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setPreferredSize(new Dimension(1024, 490));
         frame.setVisible(true);
@@ -87,7 +87,8 @@ public class BattagliaNavaleClient implements MouseListener, MouseMotionListener
         messageLabel = new JLabel();
         messageLabel.setBackground(Color.lightGray);
         frame.getContentPane().add(messageLabel, BorderLayout.SOUTH);
-        frame.getContentPane().add(center,BorderLayout.CENTER);
+        frame.getContentPane().add(centralPanel,BorderLayout.CENTER);
+        frame.add(menuBar, BorderLayout.NORTH);
         frame.pack();
         listener = new messageListener(serverAddress, this);
     }
@@ -97,20 +98,19 @@ public class BattagliaNavaleClient implements MouseListener, MouseMotionListener
         shipsPanel = new JPanel();
         ships = new JPanel[6][7];  
         shipsPanel.setLayout(new GridLayout(7, 6,0,3));
-        JLabel lb;
+        JLabel selectorLabel;
         int lunghezzaNave;
-      // shipsPanel.setPreferredSize(new Dimension(100,120));
         frame.pack();
         
         for(int i=0;i<dim.size();i++)
         {
             lunghezzaNave = Integer.parseInt(dim.get(i));
             ships[0][i] = new JPanel(new BorderLayout());
-            lb = new JLabel("✦",JLabel.LEFT);
-            lb.setFont(new Font(lb.getFont().getName(), lb.getFont().getStyle(), 17));
-            ships[0][i].add(lb);
+            selectorLabel = new JLabel("✦",JLabel.LEFT);
+            selectorLabel.setFont(new Font(selectorLabel.getFont().getName(), selectorLabel.getFont().getStyle(), 17));
+            ships[0][i].add(selectorLabel);
             if(i>0)
-                lb.setVisible(false);
+                selectorLabel.setVisible(false);
             ships[0][i].setPreferredSize(new Dimension(16,16));
             shipsPanel.add(ships[0][i]);
             for(int j=1;j<6;j++)
@@ -118,16 +118,16 @@ public class BattagliaNavaleClient implements MouseListener, MouseMotionListener
                 ships[j][i]=new JPanel(new BorderLayout());
                 
                 if(j==lunghezzaNave)
-                    ships[j][i].setBorder(cornerBorder);
+                    ships[j][i].setBorder(tlbrBorder);
                 else if(j<lunghezzaNave)
-                    ships[j][i].setBorder(bottomBorder);
+                    ships[j][i].setBorder(tlbBorder);
                 if(j<lunghezzaNave+1)
                     ships[j][i].setBackground(Color.red);
                 ships[j][i].setPreferredSize(new Dimension(16,16));
                 shipsPanel.add(ships[j][i]);
             }
       }
-      center.add(shipsPanel,BorderLayout.NORTH);
+      centralPanel.add(shipsPanel,BorderLayout.NORTH);
       frame.pack();
         int hPadding = shipsPanel.getWidth()-16*6;
         int vPadding = shipsPanel.getHeight()-16*dim.size();
@@ -201,23 +201,23 @@ public class BattagliaNavaleClient implements MouseListener, MouseMotionListener
                     opponentBoardPanel.add(opponentBoard[i][j]);
                     if(i == dim - 1 && j == dim -1)
                     {
-                        yourBoard[i][j].setBorder(cornerBorder);
-                        opponentBoard[i][j].setBorder(cornerBorder);
+                        yourBoard[i][j].setBorder(tlbrBorder);
+                        opponentBoard[i][j].setBorder(tlbrBorder);
                     }
                     else if(i == dim-1)
                     {
-                        yourBoard[i][j].setBorder(rightBorder);
-                        opponentBoard[i][j].setBorder(rightBorder);
+                        yourBoard[i][j].setBorder(tlrBorder);
+                        opponentBoard[i][j].setBorder(tlrBorder);
                     }
                     else if(j == dim - 1)
                     {
-                        yourBoard[i][j].setBorder(bottomBorder);
-                        opponentBoard[i][j].setBorder(bottomBorder);
+                        yourBoard[i][j].setBorder(tlbBorder);
+                        opponentBoard[i][j].setBorder(tlbBorder);
                     }
                     else
                     {
-                        yourBoard[i][j].setBorder(border);
-                        opponentBoard[i][j].setBorder(border);
+                        yourBoard[i][j].setBorder(tlBorder);
+                        opponentBoard[i][j].setBorder(tlBorder);
                     }
                 }
             }
@@ -231,7 +231,7 @@ public class BattagliaNavaleClient implements MouseListener, MouseMotionListener
         facePanel = new JPanel(null);
         messageLabel.setText("Praise the sun");
         facePanel.add(face);
-        center.add(facePanel, BorderLayout.CENTER);
+        centralPanel.add(facePanel, BorderLayout.CENTER);
         face.setSize(face.getPreferredSize());
         frame.pack();
         face.setLocation(facePanel.getWidth()/2-(int)face.getPreferredSize().getWidth()/2,(frame.getHeight()/2)-facePanel.getY()-(int)face.getPreferredSize().getHeight());

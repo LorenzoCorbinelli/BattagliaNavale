@@ -55,6 +55,7 @@ public class Player implements Runnable
         {
             partita.currentPlayer.avversario = this; //this object was assigned to other variable currentPlayer like avversario
             this.avversario = partita.currentPlayer; //other object was assigned to local variable currentPlayer like avversario
+            partita.currentPlayer = null;   //I hope I didn't need that
             yourTurn = avversario.opponentTurn;
             opponentTurn = avversario.yourTurn;
             if(avversario.waiting)

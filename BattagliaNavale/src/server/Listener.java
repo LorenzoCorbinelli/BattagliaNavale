@@ -64,14 +64,21 @@ public class Listener implements Runnable   //This is quite a mess, but it seems
         String command;
         while(running)
         {
-            command = input.nextLine();
-            if(requiredInput)
+            try
             {
-                requiredInput = false;
-                lastCommand = command;
-                commandPresent.release();
+                command = input.nextLine();
+                if(requiredInput)
+                {
+                    requiredInput = false;
+                    lastCommand = command;
+                    commandPresent.release();
+                }
+                System.out.println(lastCommand);
             }
-            System.out.println(lastCommand);
+            catch(java.util.NoSuchElementException ex)
+            {
+                //I need a reference to Player or Partita
+            }
         }
     }
     
