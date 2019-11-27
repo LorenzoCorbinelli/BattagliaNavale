@@ -18,7 +18,7 @@ public final class BattagliaNavaleClient implements MouseListener, MouseMotionLi
     private JPanel opponentBoardPanel;
     private JLabel messageLabel;
     private JPanel shipsPanel;
-    private JPanel centralPanel;
+    private final JPanel centralPanel;
     private JPanel facePanel;
     private Square[][] yourBoard;
     private Square[][] opponentBoard;
@@ -37,20 +37,21 @@ public final class BattagliaNavaleClient implements MouseListener, MouseMotionLi
     public void setStatus(String status)
     {
         this.status = status;
-        if(mouseOverSquare != null)
+        if(this.mouseOverSquare != null)
         {   
             switch(status.substring(0,3))
             {
                 case "INS":
-                    if(mouseOverSquare.getParent().equals(yourBoardPanel))
-                        mouseOverSquare.setBackground(Color.green);
+                    if(this.mouseOverSquare.getParent().equals(yourBoardPanel))
+                        this.mouseOverSquare.setBackground(Color.green);
                     break;
                 case "WAT":
-                    mouseOverSquare.setBackground(Color.gray);
+                    this.mouseOverSquare.setBackground(Color.gray);
+                    this.setText("Attendi...");
                     break;
                 case "ATT":
-                    if(mouseOverSquare.getParent().equals(opponentBoardPanel))
-                        mouseOverSquare.setBackground(Color.red);
+                    if(this.mouseOverSquare.getParent().equals(opponentBoardPanel))
+                        this.mouseOverSquare.setBackground(Color.red);
                     break;
             }
         }
@@ -126,14 +127,13 @@ public final class BattagliaNavaleClient implements MouseListener, MouseMotionLi
                 ships[j][i].setPreferredSize(new Dimension(16,16));
                 shipsPanel.add(ships[j][i]);
             }
-      }
-      centralPanel.add(shipsPanel,BorderLayout.NORTH);
-      frame.pack();
-    int hPadding = shipsPanel.getWidth()-(16*6);
-    int vPadding = shipsPanel.getHeight()-(16*dim.size());
-    System.out.println(shipsPanel.getWidth() + " - " + 16*6 + " = " + hPadding);
-    System.out.println(shipsPanel.getHeight() + " - " + 16*dim.size() + " = " + vPadding);
-    shipsPanel.setBorder(BorderFactory.createMatteBorder(hPadding/2,vPadding/2,hPadding/2,vPadding/2,frame.getBackground()));
+        }
+        centralPanel.add(shipsPanel,BorderLayout.NORTH);
+        frame.pack();
+        int hPadding = shipsPanel.getWidth()-(16*6);
+        System.out.println(shipsPanel.getWidth() + " - " + 16*6 + " = " + hPadding);
+        shipsPanel.setBorder(BorderFactory.createMatteBorder(25,hPadding/2,0,hPadding/2,frame.getBackground()));
+        frame.pack();
     }
     
     public void setSelectedShip()
@@ -247,7 +247,6 @@ public final class BattagliaNavaleClient implements MouseListener, MouseMotionLi
     public void mousePressed(MouseEvent e)
     {
         Square source = (Square)e.getSource();
-        
         if(source.getParent().equals(yourBoardPanel))
         {
             if(status.startsWith("INS"))
@@ -260,6 +259,7 @@ public final class BattagliaNavaleClient implements MouseListener, MouseMotionLi
                 else
                 {
                     mouseExited(e);
+                    this.mouseOverSquare = source;
                     if(selectedSquare.equals(source))
                     {
                         selectedSquare = null;
@@ -288,8 +288,8 @@ public final class BattagliaNavaleClient implements MouseListener, MouseMotionLi
     @Override
     public void mouseEntered(MouseEvent e)  //TODO: Mancano controlli
     {
-        mouseOverSquare = (Square) e.getSource();
-        if(mouseOverSquare.getParent().equals(yourBoardPanel))
+        this.mouseOverSquare = (Square) e.getSource();
+        if(this.mouseOverSquare.getParent().equals(yourBoardPanel))
         //<editor-fold defaultstate="collapsed" desc="Mouse in yourField">
         {
             if(status.startsWith("INS"))
@@ -347,11 +347,11 @@ public final class BattagliaNavaleClient implements MouseListener, MouseMotionLi
         {
             if(status.startsWith("ATT"))
             {
-                mouseOverSquare.setBackground(Color.red);
+                this.mouseOverSquare.setBackground(Color.red);
             }
             else
             {
-                mouseOverSquare.setBackground(Color.gray);
+                this.mouseOverSquare.setBackground(Color.gray);
             }
         }
     }
@@ -359,7 +359,7 @@ public final class BattagliaNavaleClient implements MouseListener, MouseMotionLi
     @Override
     public void mouseExited(MouseEvent e)   //TODO: Mancano controlli
     {
-        mouseOverSquare = null;
+        this.mouseOverSquare = null;
         Square source = (Square)e.getSource();
         source.resetColor();
         if(source.getParent().equals(yourBoardPanel))
@@ -369,7 +369,7 @@ public final class BattagliaNavaleClient implements MouseListener, MouseMotionLi
                 if(selectedSquare != null)
                 {
                     int len = Integer.parseInt(status.split(" ")[1]);
-                    switch(calcDir(selectedSquare, source))
+                    switch(calcDir(selectedSquare, source))     //Should be moved in another method
                     {
                         case 'n':
                             for(int i = 0; i < len; i++)
