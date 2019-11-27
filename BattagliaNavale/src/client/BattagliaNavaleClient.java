@@ -566,8 +566,8 @@ public final class BattagliaNavaleClient implements MouseListener, MouseMotionLi
     
     void drawNotHit(int x, int y)
     {
-        opponentBoard[x][y].setColor(Color.GREEN);
-        opponentBoard[x][y].setBackground(Color.GREEN);
+        opponentBoard[x][y].setColor(Color.ORANGE);
+        opponentBoard[x][y].setBackground(Color.ORANGE);
     }
     
     @Override
