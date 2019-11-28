@@ -1,0 +1,10 @@
+Creare il gioco della battaglia navale tra due giocatori. I giocatori si alternano nelle giocate. La scacchiera è composta da una matrice 21x21 Ogni giocatore ha a disposizione:
+
+    n. 3 navi da 2 posti
+    n. 2 navi da 3 posti
+    n. 1 nave da 4 posti
+    n. 1 nave da 5 posti
+
+Le navi devono avere una distanza di almeno 1 casella una dall’altra.
+
+L’applicazione sarà composta da due “moduli”: la parte server e la parte client.

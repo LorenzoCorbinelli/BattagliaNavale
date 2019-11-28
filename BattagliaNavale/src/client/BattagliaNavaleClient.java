@@ -2,8 +2,10 @@ package client;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.*;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Scanner;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -12,6 +14,9 @@ public final class BattagliaNavaleClient implements MouseListener, MouseMotionLi
 {
     private final JFrame frame;
     private final JMenuBar menuBar;
+    private JMenu fileMenu;
+    private JMenu helpMenu;
+    private JFrame fHelp;
     private JPanel[][] ships;
     private JLabel face;
     private JPanel yourBoardPanel;
@@ -68,11 +73,13 @@ public final class BattagliaNavaleClient implements MouseListener, MouseMotionLi
         status = "WAT";
         centralPanel = new JPanel(new BorderLayout());
         menuBar = new JMenuBar();
-        JMenu fileMenu = new JMenu("File");
-        JMenu helpMenu = new JMenu("Help");
+        fileMenu = new JMenu("File");
+        helpMenu = new JMenu("Help");
         
         menuBar.add(fileMenu);
         menuBar.add(helpMenu);
+        fHelp = new JFrame("Help");
+        
         ArrayList<Image> icons = new ArrayList<>();
         icons.add(scaleImage(new ImageIcon(getClass().getResource("icona.png")),16,16).getImage());
         icons.add(scaleImage(new ImageIcon(getClass().getResource("icona.png")),64,64).getImage());
@@ -241,8 +248,41 @@ public final class BattagliaNavaleClient implements MouseListener, MouseMotionLi
         face.setSize(face.getPreferredSize());
         frame.pack();
         face.setLocation(facePanel.getWidth()/2-(int)face.getPreferredSize().getWidth()/2,(frame.getHeight()/2)-facePanel.getY()-(int)face.getPreferredSize().getHeight()-menuBar.getHeight());
+        
+        fHelp.setPreferredSize(new Dimension(500, 500));
+        fHelp.setResizable(false);
+        rules();
+        fHelp.pack();
+     //   helpMenu.add(fHelp);
+        helpMenu.addMouseListener(new MouseAdapter() 
+        {
+            @Override
+            public void  mouseClicked(MouseEvent e)
+            {
+                fHelp.show();
+            }
+        });
     }
-
+    
+    private void rules()
+    {
+        JLabel lb = new JLabel();
+        String s = "";
+        try
+        {
+            File f = new File("rules.txt");
+            System.out.println(f.exists());
+            FileReader file = new FileReader(f); 
+            Scanner sc = new Scanner(file);
+            while(sc.hasNextLine())
+                s+= sc.nextLine();
+            lb.setText(s);
+            fHelp.getContentPane().add(lb,BorderLayout.CENTER);
+            file.close();
+            
+        }catch(Exception e) {}
+    }
+    
     @Override
     public void mousePressed(MouseEvent e)
     {
