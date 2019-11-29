@@ -16,7 +16,7 @@ public final class BattagliaNavaleClient implements MouseListener, MouseMotionLi
     private final JMenuBar menuBar;
     private JMenu fileMenu;
     private JMenu helpMenu;
-    private JFrame fHelp;
+    private JFrame  fRules;
     private JPanel[][] ships;
     private JLabel face;
     private JPanel yourBoardPanel;
@@ -78,7 +78,7 @@ public final class BattagliaNavaleClient implements MouseListener, MouseMotionLi
         
         menuBar.add(fileMenu);
         menuBar.add(helpMenu);
-        fHelp = new JFrame("Help");
+         fRules = new JFrame("Regole");
         
         ArrayList<Image> icons = new ArrayList<>();
         icons.add(scaleImage(new ImageIcon(getClass().getResource("icona.png")),16,16).getImage());
@@ -91,6 +91,9 @@ public final class BattagliaNavaleClient implements MouseListener, MouseMotionLi
         frame.setVisible(true);
         frame.setResizable(false);
         frame.pack();
+        
+         fRules.setIconImages(icons);
+         fRules.pack();
         
         messageLabel = new JLabel();
         messageLabel.setBackground(Color.lightGray);
@@ -249,44 +252,14 @@ public final class BattagliaNavaleClient implements MouseListener, MouseMotionLi
         frame.pack();
         face.setLocation(facePanel.getWidth()/2-(int)face.getPreferredSize().getWidth()/2,(frame.getHeight()/2)-facePanel.getY()-(int)face.getPreferredSize().getHeight()-menuBar.getHeight());
         
-        fHelp.setPreferredSize(new Dimension(500, 500));
-        fHelp.setResizable(false);
-        rules();
-        fHelp.pack();
-     //   helpMenu.add(fHelp);
+         fRules.setPreferredSize(new Dimension(500, 650));
+         fRules.setResizable(false);
+         fRules.pack();
         JMenuItem jmi = new JMenuItem("Regole");
         helpMenu.add(jmi);
         jmi.addActionListener(this);
     }
-    /*
-        creare classe per help
-        sottomenu con regole e about
-        sistemare label
-    */
-    private void rules()
-    {
-        JLabel lb = new JLabel();
-        String s = "";
-        try
-        {
-            InputStream file = getClass().getResource("GameRules.md").openStream();
-//            File f = new File();
-//            System.out.println(f.exists());
-//            System.out.println(f.getAbsolutePath());
-//            FileReader file = new FileReader(f); 
-            Scanner sc = new Scanner(file, "UTF-8");
-            while(sc.hasNextLine())
-                s+= sc.nextLine();
-            lb.setText(s);
-            fHelp.getContentPane().add(lb,BorderLayout.CENTER);
-            file.close();
-            
-        }catch(Exception e) 
-        {
-            System.out.println(e);
-        }
-    }
-    
+
     @Override
     public void mousePressed(MouseEvent e)
     {
@@ -717,10 +690,14 @@ public final class BattagliaNavaleClient implements MouseListener, MouseMotionLi
     @Override
     public void actionPerformed(ActionEvent e)
     {
-        //guardare chi manda evento: ritorna Regole
-        //creo oggetto della classe rulesFrame
-        System.out.println(e.getActionCommand());
-        rules();
-        fHelp.show();
+        if(e.getActionCommand().equals("Regole"))
+        {
+            rulesFrame rules = new rulesFrame();
+            JLabel text;
+            text = rules.rules();
+             fRules.getContentPane().add(text,BorderLayout.NORTH);
+             
+        }
+         fRules.show();
     }
 }
