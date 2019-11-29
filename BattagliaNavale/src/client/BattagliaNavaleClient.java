@@ -10,7 +10,7 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.Border;
 
-public final class BattagliaNavaleClient implements MouseListener, MouseMotionListener
+public final class BattagliaNavaleClient implements MouseListener, MouseMotionListener, ActionListener
 {
     private final JFrame frame;
     private final JMenuBar menuBar;
@@ -254,33 +254,37 @@ public final class BattagliaNavaleClient implements MouseListener, MouseMotionLi
         rules();
         fHelp.pack();
      //   helpMenu.add(fHelp);
-        helpMenu.addMouseListener(new MouseAdapter() 
-        {
-            @Override
-            public void  mouseClicked(MouseEvent e)
-            {
-                fHelp.show();
-            }
-        });
+        JMenuItem jmi = new JMenuItem("Regole");
+        helpMenu.add(jmi);
+        jmi.addActionListener(this);
     }
-    
+    /*
+        creare classe per help
+        sottomenu con regole e about
+        sistemare label
+    */
     private void rules()
     {
         JLabel lb = new JLabel();
         String s = "";
         try
         {
-            File f = new File("rules.txt");
-            System.out.println(f.exists());
-            FileReader file = new FileReader(f); 
-            Scanner sc = new Scanner(file);
+            InputStream file = getClass().getResource("GameRules.md").openStream();
+//            File f = new File();
+//            System.out.println(f.exists());
+//            System.out.println(f.getAbsolutePath());
+//            FileReader file = new FileReader(f); 
+            Scanner sc = new Scanner(file, "UTF-8");
             while(sc.hasNextLine())
                 s+= sc.nextLine();
             lb.setText(s);
             fHelp.getContentPane().add(lb,BorderLayout.CENTER);
             file.close();
             
-        }catch(Exception e) {}
+        }catch(Exception e) 
+        {
+            System.out.println(e);
+        }
     }
     
     @Override
@@ -708,5 +712,15 @@ public final class BattagliaNavaleClient implements MouseListener, MouseMotionLi
         }
 
         return new ImageIcon(icon.getImage().getScaledInstance(nw, nh, Image.SCALE_SMOOTH));
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e)
+    {
+        //guardare chi manda evento: ritorna Regole
+        //creo oggetto della classe rulesFrame
+        System.out.println(e.getActionCommand());
+        rules();
+        fHelp.show();
     }
 }
