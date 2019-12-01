@@ -5,12 +5,19 @@
  */
 package client;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
+import sounds.Music;
 
 /**
  *
@@ -93,6 +100,18 @@ public class messageListener implements Runnable
                     break;
                 case "WAT": //Water
                     client.drawWater(Integer.parseInt(command[1]), Integer.parseInt(command[2]));
+                    {
+                        try {
+                            Music Water = new Music(new File(getClass().getResource("WaterSound.mp3").toString()),2000);
+                            Water.run();
+                        } catch (LineUnavailableException ex) {
+                            Logger.getLogger(messageListener.class.getName()).log(Level.SEVERE, null, ex);
+                        } catch (UnsupportedAudioFileException ex) {
+                            Logger.getLogger(messageListener.class.getName()).log(Level.SEVERE, null, ex);
+                        } catch (IOException ex) {
+                            Logger.getLogger(messageListener.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
                     break;
                 case "THY": //They Hit You
                     client.drawOppHit(Integer.parseInt(command[1]), Integer.parseInt(command[2]));
@@ -111,6 +130,17 @@ public class messageListener implements Runnable
                     break;
                 case "WIN":
                     client.setText("Hai vinto!");
+//                    {
+//                        try {
+//                            Music Win = new Music(new File(getClass().getResource("VictorySoundEffect.wav").toString()),8000);
+//                        } catch (LineUnavailableException ex) {
+//                            Logger.getLogger(messageListener.class.getName()).log(Level.SEVERE, null, ex);
+//                        } catch (UnsupportedAudioFileException ex) {
+//                            Logger.getLogger(messageListener.class.getName()).log(Level.SEVERE, null, ex);
+//                        } catch (IOException ex) {
+//                            Logger.getLogger(messageListener.class.getName()).log(Level.SEVERE, null, ex);
+//                        }
+//                    }
                     break;
                 case "LOS":
                     client.setText("Oh no! Hai perso!");
