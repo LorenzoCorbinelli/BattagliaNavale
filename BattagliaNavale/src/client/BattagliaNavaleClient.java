@@ -5,10 +5,12 @@ import java.awt.event.*;
 import java.io.*;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Scanner;
 import javax.imageio.ImageIO;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.*;
 import javax.swing.border.Border;
+import sounds.Music;
 
 public final class BattagliaNavaleClient implements MouseListener, MouseMotionListener, ActionListener
 {
@@ -81,9 +83,9 @@ public final class BattagliaNavaleClient implements MouseListener, MouseMotionLi
          fRules = new JFrame("Regole");
         
         ArrayList<Image> icons = new ArrayList<>();
-        icons.add(scaleImage(new ImageIcon(getClass().getResource("icona.png")),16,16).getImage());
-        icons.add(scaleImage(new ImageIcon(getClass().getResource("icona.png")),64,64).getImage());
-        icons.add(scaleImage(new ImageIcon(getClass().getResource("icona.png")),128,128).getImage());
+        icons.add(scaleImage(new ImageIcon(getClass().getResource("/resources/images/icona.png")),16,16).getImage());
+        icons.add(scaleImage(new ImageIcon(getClass().getResource("/resources/images/icona.png")),64,64).getImage());
+        icons.add(scaleImage(new ImageIcon(getClass().getResource("/resources/images/icona.png")),128,128).getImage());
         frame = new JFrame("Ultimate Battleship");
         frame.setIconImages(icons);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -102,6 +104,17 @@ public final class BattagliaNavaleClient implements MouseListener, MouseMotionLi
         frame.add(menuBar, BorderLayout.NORTH);
         frame.pack();
         listener = new messageListener(serverAddress, this);
+        
+        try
+        {
+            Music m = new Music(new BufferedInputStream(getClass().getResourceAsStream("/resources/sounds/VictorySoundEffect.wav")),8000);
+            m.run();
+        }
+        catch (IOException | LineUnavailableException | UnsupportedAudioFileException e)
+        {
+            System.out.println(e);
+        }
+            
     }
     
     public void elencoNavi(ArrayList <String> dim)
@@ -244,7 +257,7 @@ public final class BattagliaNavaleClient implements MouseListener, MouseMotionLi
         frame.addMouseMotionListener(this);
         try 
         {
-            explosion = scaleImage(new ImageIcon(ImageIO.read(BattagliaNavaleClient.class.getResource("explosion.png"))),yourBoard[0][0].getWidth(),yourBoard[0][0].getHeight());
+            explosion = scaleImage(new ImageIcon(ImageIO.read(BattagliaNavaleClient.class.getResource("/resources/images/explosion.png"))),yourBoard[0][0].getWidth(),yourBoard[0][0].getHeight());
         } catch (IOException ex) {}
         elencoNavi(shipsDim);
         

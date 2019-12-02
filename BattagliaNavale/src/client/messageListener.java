@@ -5,6 +5,7 @@
  */
 package client;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -102,7 +103,7 @@ public class messageListener implements Runnable
                     client.drawWater(Integer.parseInt(command[1]), Integer.parseInt(command[2]));
                     {
                         try {
-                            Music Water = new Music(new File(getClass().getResource("WaterSound.mp3").toString()),2000);
+                            Music Water = new Music(new BufferedInputStream(getClass().getResourceAsStream("/resources/sounds/WaterSound.mp3")),2000);
                             Water.run();
                         } catch (LineUnavailableException ex) {
                             Logger.getLogger(messageListener.class.getName()).log(Level.SEVERE, null, ex);

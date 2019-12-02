@@ -5,6 +5,7 @@ package sounds;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -22,18 +23,10 @@ public class Main
     {
         try
         {
-            Music m = new Music(new File("C:\\Users\\giuli\\Downloads\\VictorySoundEffect.wav"),8000);
+            Music m = new Music(new BufferedInputStream(Main.class.getResourceAsStream("/sound/VictorySoundEffect.wav")),8000);
             m.run();
         }
-        catch (LineUnavailableException ex) 
-        {
-            Logger.getLogger(Music.class.getName()).log(Level.SEVERE, null, ex);
-        } 
-        catch (IOException ex) 
-        {
-            Logger.getLogger(Music.class.getName()).log(Level.SEVERE, null, ex);
-        } 
-        catch (Exception e) 
+        catch (IOException | LineUnavailableException | UnsupportedAudioFileException e) 
         {
             e.printStackTrace();
         }

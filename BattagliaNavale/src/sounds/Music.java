@@ -2,6 +2,7 @@ package sounds;
 
 
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -15,20 +16,16 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 
 public class Music implements Runnable 
 {
-    private static boolean tryToInterruptSound = false;
+    //private static boolean tryToInterruptSound = false;
     //private static long mainTimeOut;
-    private static long startTime = System.currentTimeMillis();
-    private static Clip clip;
-    private static AudioInputStream inputStream;
-    private static AudioFormat format;
-    private static long audioFileLength;
-    private static int frameSize;
-    private static float frameRate;
-    private static long durationInMiliSeconds;
+    private final long startTime = System.currentTimeMillis();
+    private Clip clip;
+    private AudioInputStream inputStream;
+    private long durationInMiliSeconds;
     
-    private static File f;
+    private static BufferedInputStream f;
     
-    public Music(final File file,long duration) throws LineUnavailableException, UnsupportedAudioFileException, IOException 
+    public Music(final BufferedInputStream file,long duration) throws LineUnavailableException, UnsupportedAudioFileException, IOException 
     {
         this.f=file;
         //this.mainTimeOut = duration;
@@ -36,11 +33,6 @@ public class Music implements Runnable
         this.inputStream = null;
         this.clip = AudioSystem.getClip();
         this.inputStream = AudioSystem.getAudioInputStream(this.f);
-        this.format = this.inputStream.getFormat();
-        this.audioFileLength = this.f.length();
-        this.frameSize = this.format.getFrameSize();
-        this.frameRate = this.format.getFrameRate();
-        this.durationInMiliSeconds = (long)(((float)this.audioFileLength / (this.frameSize * this.frameRate)) * 1000);
     }
     
     public long getDurationSong()
@@ -56,16 +48,9 @@ public class Music implements Runnable
         {
             this.Play();
             this.Stop();
+            System.out.println("I don't hate you!");
         } 
-        catch (LineUnavailableException ex) 
-        {
-            Logger.getLogger(Music.class.getName()).log(Level.SEVERE, null, ex);
-        } 
-        catch (IOException ex) 
-        {
-            Logger.getLogger(Music.class.getName()).log(Level.SEVERE, null, ex);
-        } 
-        catch (InterruptedException ex) 
+        catch (LineUnavailableException | IOException | InterruptedException ex) 
         {
             Logger.getLogger(Music.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -75,6 +60,7 @@ public class Music implements Runnable
         try
         {
         this.clip.open(this.inputStream);
+        this.durationInMiliSeconds = clip.getMicrosecondLength() / 1000;
         this.clip.start();
         Thread.sleep(this.durationInMiliSeconds);
         while (true) {
@@ -90,7 +76,7 @@ public class Music implements Runnable
             }
         }
         }
-        catch(Exception e )
+        catch(IOException | InterruptedException | LineUnavailableException e )
         {
             System.out.println(e);
         }
