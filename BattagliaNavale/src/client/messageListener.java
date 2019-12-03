@@ -5,12 +5,19 @@
  */
 package client;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 
 /**
  *
@@ -36,7 +43,7 @@ public class messageListener implements Runnable
             socket = new Socket(serverAddress, 50900);
             input = new Scanner(socket.getInputStream(), "UTF-8");
             output = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), "UTF-8"), true); 
-        } catch (Exception ex)
+        } catch (IOException ex)
         {}
         
         thread = new Thread(this, "listener");
@@ -110,15 +117,15 @@ public class messageListener implements Runnable
                     catch (InterruptedException ex) {}
                     break;
                 case "WIN":
-                    client.setText("Hai vinto!");
+                    client.setText("Ammettilo, hai speso delle ore a pianifacare l'attacco. (Hai vinto)");
                     break;
                 case "LOS":
-                    client.setText("Oh no! Hai perso!");
+                    client.setText("Non c'è vento favorevole al marinaio che non sa dove andare! (Hai perso)");
                     break;
-                case "SNH": //Ships Not Hhit
+                case "SNH": //Ships Not Hit
                     client.drawNotHit(Integer.parseInt(command[1]), Integer.parseInt(command[2]));
                     break;
-                case "BRD":
+                case "BRD": //Board
                     String comm = input.nextLine();
                     ArrayList<String> brd = new ArrayList<>();
                     while(!comm.equals("END"))
@@ -129,8 +136,25 @@ public class messageListener implements Runnable
                     }
                     client.drawBoard(brd);
                     break;
-                case "OKI":
+                case "OKI": //OK Insert
                     client.setSelectedShip();
+                    break;
+                case "SND":
+                    switch(command[1])  //TODO: Add checks
+                    {
+                        case "EXP": //Explosion
+                            new SoundFX(getClass().getResourceAsStream("/resources/sounds/HitSound.wav"));
+                        break;
+                        case "SPL": //Splash
+                            new SoundFX(getClass().getResourceAsStream("/resources/sounds/WaterSound.wav"));
+                        break;
+                        case "WIN":
+                            new SoundFX(getClass().getResourceAsStream("/resources/sounds/VictorySoundEffect.wav"));
+                        break;
+                        case "LOS":
+                            new SoundFX(getClass().getResourceAsStream("/resources/sounds/LoseSound.wav"));
+                        break;
+                    }
                     break;
             }
         }

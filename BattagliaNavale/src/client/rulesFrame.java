@@ -3,6 +3,7 @@ package client;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Image;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -27,7 +28,7 @@ public class rulesFrame extends JFrame
         String s = "<html>";
         try
         {
-            InputStream file = getClass().getResource("Regolamento.md.html").openStream();
+            InputStream file = getClass().getResourceAsStream("/resources/other/Regolamento.md.html");
             Scanner sc = new Scanner(file, "UTF-8");
             while(sc.hasNextLine())
                 s+= sc.nextLine();

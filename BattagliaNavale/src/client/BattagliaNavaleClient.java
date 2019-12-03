@@ -5,8 +5,9 @@ import java.awt.event.*;
 import java.io.*;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Scanner;
 import javax.imageio.ImageIO;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.*;
 import javax.swing.border.Border;
 
@@ -33,7 +34,7 @@ public final class BattagliaNavaleClient implements MouseListener, MouseMotionLi
     private ImageIcon explosion;
     private final messageListener listener; //Using threads comes with HUGE problems, like race conditions. They shuoldn'y cause many problems in this application, thus they're not checked (yet)
     private int selectedShip = 0;
-    private ArrayList<Image> icons = new ArrayList<>();
+    private ArrayList<Image> icons;
     private final Border tlBorder = BorderFactory.createMatteBorder(1, 1, 0, 0, Color.black);
     private final Border tlbBorder = BorderFactory.createMatteBorder(1, 1, 1, 0, Color.black);
     private final Border tlrBorder = BorderFactory.createMatteBorder(1, 1, 0, 1, Color.black);
@@ -78,10 +79,11 @@ public final class BattagliaNavaleClient implements MouseListener, MouseMotionLi
         
         menuBar.add(fileMenu);
         menuBar.add(helpMenu);
-        
-        icons.add(scaleImage(new ImageIcon(getClass().getResource("icona.png")),16,16).getImage());
-        icons.add(scaleImage(new ImageIcon(getClass().getResource("icona.png")),64,64).getImage());
-        icons.add(scaleImage(new ImageIcon(getClass().getResource("icona.png")),128,128).getImage());
+
+        icons = new ArrayList<>();
+        icons.add(scaleImage(new ImageIcon(getClass().getResource("/resources/images/icona.png")),16,16).getImage());
+        icons.add(scaleImage(new ImageIcon(getClass().getResource("/resources/images/icona.png")),64,64).getImage());
+        icons.add(scaleImage(new ImageIcon(getClass().getResource("/resources/images/icona.png")),128,128).getImage());
         frame = new JFrame("Ultimate Battleship");
         frame.setIconImages(icons);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -89,7 +91,7 @@ public final class BattagliaNavaleClient implements MouseListener, MouseMotionLi
         frame.setVisible(true);
         frame.setResizable(false);
         frame.pack();
-        
+
         messageLabel = new JLabel();
         messageLabel.setBackground(Color.lightGray);
         frame.getContentPane().add(messageLabel, BorderLayout.SOUTH);
@@ -239,7 +241,7 @@ public final class BattagliaNavaleClient implements MouseListener, MouseMotionLi
         frame.addMouseMotionListener(this);
         try 
         {
-            explosion = scaleImage(new ImageIcon(ImageIO.read(BattagliaNavaleClient.class.getResource("explosion.png"))),yourBoard[0][0].getWidth(),yourBoard[0][0].getHeight());
+            explosion = scaleImage(new ImageIcon(ImageIO.read(BattagliaNavaleClient.class.getResource("/resources/images/explosion.png"))),yourBoard[0][0].getWidth(),yourBoard[0][0].getHeight());
         } catch (IOException ex) {}
         elencoNavi(shipsDim);
         
