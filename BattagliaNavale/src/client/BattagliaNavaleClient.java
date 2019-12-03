@@ -10,7 +10,6 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.*;
 import javax.swing.border.Border;
-import sounds.Music;
 
 public final class BattagliaNavaleClient implements MouseListener, MouseMotionListener, ActionListener
 {
@@ -80,7 +79,7 @@ public final class BattagliaNavaleClient implements MouseListener, MouseMotionLi
         
         menuBar.add(fileMenu);
         menuBar.add(helpMenu);
-         fRules = new JFrame("Regole");
+        fRules = new JFrame("Regole");
         
         ArrayList<Image> icons = new ArrayList<>();
         icons.add(scaleImage(new ImageIcon(getClass().getResource("/resources/images/icona.png")),16,16).getImage());
@@ -94,8 +93,8 @@ public final class BattagliaNavaleClient implements MouseListener, MouseMotionLi
         frame.setResizable(false);
         frame.pack();
         
-         fRules.setIconImages(icons);
-         fRules.pack();
+        fRules.setIconImages(icons);
+        fRules.pack();
         
         messageLabel = new JLabel();
         messageLabel.setBackground(Color.lightGray);
@@ -104,17 +103,6 @@ public final class BattagliaNavaleClient implements MouseListener, MouseMotionLi
         frame.add(menuBar, BorderLayout.NORTH);
         frame.pack();
         listener = new messageListener(serverAddress, this);
-        
-        try
-        {
-            Music m = new Music(new BufferedInputStream(getClass().getResourceAsStream("/resources/sounds/VictorySoundEffect.wav")),8000);
-            m.run();
-        }
-        catch (IOException | LineUnavailableException | UnsupportedAudioFileException e)
-        {
-            System.out.println(e);
-        }
-            
     }
     
     public void elencoNavi(ArrayList <String> dim)

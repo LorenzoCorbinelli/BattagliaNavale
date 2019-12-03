@@ -328,11 +328,14 @@ public class Player implements Runnable
                         }
                     }
 
-
-
                     moves.add(new Position(x,y));
                     listener.send("END");
                     avversario.listener.send("END");
+                    
+                    if(hit)
+                    {
+                        listener.send("SND EXP");
+                    }
                     
                     checkWin();
                 }while(hit && partita.inProgress);
@@ -341,6 +344,7 @@ public class Player implements Runnable
             if(partita.inProgress)
             {
                 listener.send("WAT " + x + " " + y);
+                listener.send("SND SPL");
                 avversario.listener.send("THW " + x + " " + y);
 
                 listener.send("STA WAT");
@@ -384,6 +388,8 @@ public class Player implements Runnable
     {
         NotHit();
         listener.send("WIN");
+        listener.send("SND WIN");
         avversario.listener.send("LOS");
+        avversario.listener.send("SND LOS");
     }
 }

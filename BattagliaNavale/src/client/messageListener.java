@@ -18,7 +18,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
-import sounds.Music;
 
 /**
  *
@@ -44,7 +43,7 @@ public class messageListener implements Runnable
             socket = new Socket(serverAddress, 50900);
             input = new Scanner(socket.getInputStream(), "UTF-8");
             output = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), "UTF-8"), true); 
-        } catch (Exception ex)
+        } catch (IOException ex)
         {}
         
         thread = new Thread(this, "listener");
@@ -97,35 +96,10 @@ public class messageListener implements Runnable
                     client.drawPiece(Integer.parseInt(command[1]), Integer.parseInt(command[2]));
                     break;
                 case "HIT": //Hit
-                    {
-                        System.out.println("I hit");
-                        try {
-                            Music Hit = new Music(new BufferedInputStream(getClass().getResourceAsStream("/resources/sounds/HitSound.wav")),2000);
-                            Hit.run();
-                        } catch (LineUnavailableException ex) {
-                            Logger.getLogger(messageListener.class.getName()).log(Level.SEVERE, null, ex);
-                        } catch (UnsupportedAudioFileException ex) {
-                            Logger.getLogger(messageListener.class.getName()).log(Level.SEVERE, null, ex);
-                        } catch (IOException ex) {
-                            Logger.getLogger(messageListener.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-                    }
                     client.drawHit(Integer.parseInt(command[1]), Integer.parseInt(command[2]));
                     break;
                 case "WAT": //Water
                     client.drawWater(Integer.parseInt(command[1]), Integer.parseInt(command[2]));
-                    {
-                        try {
-                            Music Water = new Music(new BufferedInputStream(getClass().getResourceAsStream("/resources/sounds/WaterSound.wav")),2000);
-                            Water.run();
-                        } catch (LineUnavailableException ex) {
-                            Logger.getLogger(messageListener.class.getName()).log(Level.SEVERE, null, ex);
-                        } catch (UnsupportedAudioFileException ex) {
-                            Logger.getLogger(messageListener.class.getName()).log(Level.SEVERE, null, ex);
-                        } catch (IOException ex) {
-                            Logger.getLogger(messageListener.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-                    }
                     break;
                 case "THY": //They Hit You
                     client.drawOppHit(Integer.parseInt(command[1]), Integer.parseInt(command[2]));
@@ -143,39 +117,15 @@ public class messageListener implements Runnable
                     catch (InterruptedException ex) {}
                     break;
                 case "WIN":
-                    client.setText("Hai vinto!");
-                  {
-                        try {
-                            Music Win = new Music(new BufferedInputStream(getClass().getResourceAsStream("/resources/sounds/VictorySoundEffect.wav")),2000);
-                            Win.run();
-                        } catch (LineUnavailableException ex) {
-                            Logger.getLogger(messageListener.class.getName()).log(Level.SEVERE, null, ex);
-                        } catch (UnsupportedAudioFileException ex) {
-                            Logger.getLogger(messageListener.class.getName()).log(Level.SEVERE, null, ex);
-                        } catch (IOException ex) {
-                            Logger.getLogger(messageListener.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-                    }
+                    client.setText("Ammettilo, hai speso delle ore a pianifacare l'attacco. (Hai vinto)");
                     break;
                 case "LOS":
-                    client.setText("Oh no! Hai perso!");
-                    {
-                        try {
-                            Music Lose = new Music(new BufferedInputStream(getClass().getResourceAsStream("/resources/sounds/LoseSound.wav")),2000);
-                            Lose.run();
-                        } catch (LineUnavailableException ex) {
-                            Logger.getLogger(messageListener.class.getName()).log(Level.SEVERE, null, ex);
-                        } catch (UnsupportedAudioFileException ex) {
-                            Logger.getLogger(messageListener.class.getName()).log(Level.SEVERE, null, ex);
-                        } catch (IOException ex) {
-                            Logger.getLogger(messageListener.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-                    }
+                    client.setText("Non c'è vento favorevole al marinaio che non sa dove andare! (Hai perso)");
                     break;
-                case "SNH": //Ships Not Hhit
+                case "SNH": //Ships Not Hit
                     client.drawNotHit(Integer.parseInt(command[1]), Integer.parseInt(command[2]));
                     break;
-                case "BRD":
+                case "BRD": //Board
                     String comm = input.nextLine();
                     ArrayList<String> brd = new ArrayList<>();
                     while(!comm.equals("END"))
@@ -186,8 +136,25 @@ public class messageListener implements Runnable
                     }
                     client.drawBoard(brd);
                     break;
-                case "OKI":
+                case "OKI": //OK Insert
                     client.setSelectedShip();
+                    break;
+                case "SND":
+                    switch(command[1])  //TODO: Add checks
+                    {
+                        case "EXP": //Explosion
+                            new SoundFX(getClass().getResourceAsStream("/resources/sounds/HitSound.wav"));
+                        break;
+                        case "SPL": //Splash
+                            new SoundFX(getClass().getResourceAsStream("/resources/sounds/WaterSound.wav"));
+                        break;
+                        case "WIN":
+                            new SoundFX(getClass().getResourceAsStream("/resources/sounds/VictorySoundEffect.wav"));
+                        break;
+                        case "LOS":
+                            new SoundFX(getClass().getResourceAsStream("/resources/sounds/LoseSound.wav"));
+                        break;
+                    }
                     break;
             }
         }

@@ -1,38 +1,45 @@
-package sounds;
+package client;
 
 
 
 import java.io.BufferedInputStream;
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
-public class Music implements Runnable 
+public class SoundFX implements Runnable 
 {
     //private static boolean tryToInterruptSound = false;
     //private static long mainTimeOut;
-    private final long startTime = System.currentTimeMillis();
     private Clip clip;
     private AudioInputStream inputStream;
     private long durationInMiliSeconds;
+    private static Thread t;
     
     private static BufferedInputStream f;
     
-    public Music(final BufferedInputStream file,long duration) throws LineUnavailableException, UnsupportedAudioFileException, IOException 
+    public SoundFX(final InputStream file)
     {
-        this.f=file;
-        //this.mainTimeOut = duration;
-        this.clip = null;
-        this.inputStream = null;
-        this.clip = AudioSystem.getClip();
-        this.inputStream = AudioSystem.getAudioInputStream(this.f);
+        try {
+            t = new Thread(this);
+            this.f=new BufferedInputStream(file);
+            //this.mainTimeOut = duration;
+            this.clip = null;
+            this.inputStream = null;
+            this.clip = AudioSystem.getClip();
+            this.inputStream = AudioSystem.getAudioInputStream(this.f);
+            t.start();
+        } catch (LineUnavailableException ex) {} catch (UnsupportedAudioFileException | IOException ex) {
+            System.out.println(ex);
+            System.out.println(Arrays.toString(ex.getStackTrace()));
+        }
     }
     
     public long getDurationSong()
@@ -52,7 +59,7 @@ public class Music implements Runnable
         } 
         catch (LineUnavailableException | IOException | InterruptedException ex) 
         {
-            Logger.getLogger(Music.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(SoundFX.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     public void Play() throws LineUnavailableException, IOException, InterruptedException
