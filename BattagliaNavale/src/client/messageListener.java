@@ -5,8 +5,6 @@
  */
 package client;
 
-import java.io.BufferedInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
@@ -14,10 +12,6 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.UnsupportedAudioFileException;
 
 /**
  *
@@ -40,7 +34,7 @@ public class messageListener implements Runnable
         
         try
         {
-            socket = new Socket(serverAddress, 50900);
+            socket = new Socket(serverAddress, 42069);
             input = new Scanner(socket.getInputStream(), "UTF-8");
             output = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), "UTF-8"), true); 
         } catch (IOException ex)
@@ -77,8 +71,11 @@ public class messageListener implements Runnable
             {
                 case "STP": //Setup
                     String [] s;
+                    String gdim;
                     ArrayList<String> dim = new ArrayList<>();
-                    int griglia = Integer.parseInt(input.nextLine().split(" ")[1]);
+                    gdim = input.nextLine();
+                    System.out.println(gdim);
+                    int griglia = Integer.parseInt(gdim.split(" ")[1]);
                     String com = input.nextLine();
                     while(!com.equals("END"))
                     {

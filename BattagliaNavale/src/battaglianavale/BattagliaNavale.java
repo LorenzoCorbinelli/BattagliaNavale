@@ -11,10 +11,7 @@ public class BattagliaNavale
     {
         if(args.length == 0)    //client
         {
-            try
-            {
-                client = new BattagliaNavaleClient("127.0.0.1"); //connessione del client al server sullo stesso host 
-            }catch(Exception e){}
+            client = new BattagliaNavaleClient(""); //connessione del client al server sullo stesso host 
         }
         else if(args[0].equals("-server")) //server
         {

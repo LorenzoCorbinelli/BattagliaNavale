@@ -2,12 +2,9 @@ package client;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.io.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import javax.imageio.ImageIO;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.*;
 import javax.swing.border.Border;
 
@@ -15,17 +12,17 @@ public final class BattagliaNavaleClient implements MouseListener, MouseMotionLi
 {
     private final JFrame frame;
     private final JMenuBar menuBar;
-    private JMenu fileMenu;
-    private JMenu helpMenu;
-    private JFrame  fRules;
+    private final JMenu fileMenu;
+    private final JMenu helpMenu;
+    private final JFrame  fRules;
     private JPanel[][] ships;
-    private JLabel face;
+    private final JLabel face;
     private JPanel yourBoardPanel;
     private JPanel opponentBoardPanel;
-    private JLabel messageLabel;
+    private final JLabel messageLabel;
     private JPanel shipsPanel;
     private final JPanel centralPanel;
-    private JPanel facePanel;
+    private final JPanel facePanel;
     private Square[][] yourBoard;
     private Square[][] opponentBoard;
     private Square mouseOverSquare;
@@ -33,7 +30,7 @@ public final class BattagliaNavaleClient implements MouseListener, MouseMotionLi
     private String status;
     private int dim;
     private ImageIcon explosion;
-    private final messageListener listener; //Using threads comes with HUGE problems, like race conditions. They shuoldn'y cause many problems in this application, thus they're not checked (yet)
+    private messageListener listener; //Using threads comes with HUGE problems, like race conditions. They shuoldn'y cause many problems in this application, thus they're not checked (yet)
     private int selectedShip = 0;
     private final Border tlBorder = BorderFactory.createMatteBorder(1, 1, 0, 0, Color.black);
     private final Border tlbBorder = BorderFactory.createMatteBorder(1, 1, 1, 0, Color.black);
@@ -74,6 +71,8 @@ public final class BattagliaNavaleClient implements MouseListener, MouseMotionLi
         status = "WAT";
         centralPanel = new JPanel(new BorderLayout());
         menuBar = new JMenuBar();
+        face = new JLabel("(·‿·)",JLabel.CENTER);
+        face.setVerticalAlignment(JLabel.CENTER);
         fileMenu = new JMenu("File");
         helpMenu = new JMenu("Help");
         
@@ -102,7 +101,35 @@ public final class BattagliaNavaleClient implements MouseListener, MouseMotionLi
         frame.getContentPane().add(centralPanel,BorderLayout.CENTER);
         frame.add(menuBar, BorderLayout.NORTH);
         frame.pack();
-        listener = new messageListener(serverAddress, this);
+        
+        messageLabel.setBackground(Color.lightGray);
+        frame.getContentPane().add(messageLabel, BorderLayout.SOUTH);
+        facePanel = new JPanel(null);
+        messageLabel.setText("Praise the sun");
+        facePanel.add(face);
+        centralPanel.add(facePanel, BorderLayout.CENTER);
+        frame.addMouseMotionListener(this);
+        face.setSize(face.getPreferredSize());
+        frame.pack();
+        face.setLocation(facePanel.getWidth()/2-(int)face.getPreferredSize().getWidth()/2,(frame.getHeight()/2)-facePanel.getY()-(int)face.getPreferredSize().getHeight()-menuBar.getHeight());
+        
+        fRules.setPreferredSize(new Dimension(500, 650));
+        fRules.setResizable(false);
+        fRules.pack();
+        
+        JMenuItem jmi = new JMenuItem("Regole");
+        jmi.addActionListener(this);
+        helpMenu.add(jmi);
+        jmi = new JMenuItem("Connetti");
+        jmi.addActionListener(this);
+        fileMenu.add(jmi);
+        fileMenu.addSeparator();
+        jmi = new JMenuItem("Esci");
+        jmi.addActionListener(this);
+        fileMenu.add(jmi);
+        
+        if(!serverAddress.equals(""))
+            listener = new messageListener(serverAddress, this);
     }
     
     public void elencoNavi(ArrayList <String> dim)
@@ -172,13 +199,9 @@ public final class BattagliaNavaleClient implements MouseListener, MouseMotionLi
         yourBoardPanel = new JPanel();
         opponentBoardPanel = new JPanel();
         yourBoard = new Square[dim][dim];   
-        opponentBoard = new Square[dim][dim];  
-        messageLabel= new JLabel();
+        opponentBoard = new Square[dim][dim];
         yourBoardPanel.setLayout(new GridLayout(dim+2, dim+2,0,0));
         opponentBoardPanel.setLayout(new GridLayout(dim+2, dim+2,0,0));
-        
-        face = new JLabel("(·‿·)",JLabel.CENTER);
-        face.setVerticalAlignment(JLabel.CENTER);
 
         for (int j = -1; j < dim+1; j++)
         {
@@ -234,31 +257,19 @@ public final class BattagliaNavaleClient implements MouseListener, MouseMotionLi
         }
         yourBoardPanel.setPreferredSize(new Dimension(432,432));
         opponentBoardPanel.setPreferredSize(new Dimension(432,432));
-        messageLabel.setBackground(Color.lightGray);
-        frame.getContentPane().add(messageLabel, BorderLayout.SOUTH);
         frame.getContentPane().add(yourBoardPanel, BorderLayout.WEST);
         frame.getContentPane().add(opponentBoardPanel, BorderLayout.EAST);
-        facePanel = new JPanel(null);
-        messageLabel.setText("Praise the sun");
-        facePanel.add(face);
-        centralPanel.add(facePanel, BorderLayout.CENTER);
-        frame.addMouseMotionListener(this);
+        frame.pack();
         try 
         {
             explosion = scaleImage(new ImageIcon(ImageIO.read(BattagliaNavaleClient.class.getResource("/resources/images/explosion.png"))),yourBoard[0][0].getWidth(),yourBoard[0][0].getHeight());
         } catch (IOException ex) {}
         elencoNavi(shipsDim);
+        frame.pack();
         
         face.setSize(face.getPreferredSize());
         frame.pack();
         face.setLocation(facePanel.getWidth()/2-(int)face.getPreferredSize().getWidth()/2,(frame.getHeight()/2)-facePanel.getY()-(int)face.getPreferredSize().getHeight()-menuBar.getHeight());
-        
-         fRules.setPreferredSize(new Dimension(500, 650));
-         fRules.setResizable(false);
-         fRules.pack();
-        JMenuItem jmi = new JMenuItem("Regole");
-        helpMenu.add(jmi);
-        jmi.addActionListener(this);
     }
 
     @Override
@@ -691,14 +702,25 @@ public final class BattagliaNavaleClient implements MouseListener, MouseMotionLi
     @Override
     public void actionPerformed(ActionEvent e)
     {
-        if(e.getActionCommand().equals("Regole"))
+        String command = e.getActionCommand();
+        System.out.println(command);
+        switch (command)
         {
-            rulesFrame rules = new rulesFrame();
-            JLabel text;
-            text = rules.rules();
-             fRules.getContentPane().add(text,BorderLayout.NORTH);
-             
+            case "Regole":
+                rulesFrame rules = new rulesFrame();
+                JLabel text;
+                text = rules.rules();
+                fRules.getContentPane().add(text,BorderLayout.NORTH);
+                fRules.show();
+                break;
+            case "Connetti":
+                listener = new messageListener(JOptionPane.showInputDialog("Inserisci l'indirizzo IP del server: ", "127.0.0.1"), this);
+                break;
+            case "Esci":
+                frame.dispose();
+                System.exit(0);
+            default:
+                break;
         }
-         fRules.show();
     }
 }

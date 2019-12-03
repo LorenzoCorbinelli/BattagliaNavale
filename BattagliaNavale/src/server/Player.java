@@ -23,14 +23,15 @@ public class Player implements Runnable
     public boolean waiting = false;
     public Semaphore yourTurn;
     public Semaphore opponentTurn;
-    private final Listener listener;
+    public final Listener listener;
     
-    public Player(Socket s, Partita p) //constructor with parameters (a socket and a Partita)
+    public Player(Socket s, Partita p, Player avversario) //constructor with parameters (a socket and a Partita)
     {
         this.partita = p; //variable p assigned to local variable partita
         this.navi = new ArrayList<>();  //new instance of ArrayList assigned to local variable navi
         this.moves = new ArrayList<>();
-        this.listener = new Listener(s);
+        this.listener = new Listener(s, this);
+        this.avversario = avversario;
     }
     
     @Override
@@ -45,22 +46,18 @@ public class Player implements Runnable
         listener.send("STP"); //print a new line in output with the dimensions of the player's court
         listener.send("DIM " + partita.getDimensioneCampo());
         elencoNavi();
-        if(partita.currentPlayer == null) //check if the local variable currentPlayer was null
+        if(avversario == null) //check if the local variable currentPlayer was null
         {
-            partita.currentPlayer = this; //this object was assigned to local variable currentPlayer
             yourTurn = new Semaphore(0);
             opponentTurn = new Semaphore(0);
         }
         else //if the local variable currentPlayer wasn't null
         {
-            partita.currentPlayer.avversario = this; //this object was assigned to other variable currentPlayer like avversario
-            this.avversario = partita.currentPlayer; //other object was assigned to local variable currentPlayer like avversario
-            partita.currentPlayer = null;   //I hope I didn't need that
             yourTurn = avversario.opponentTurn;
             opponentTurn = avversario.yourTurn;
             if(avversario.waiting)
             {
-                avversario.listener.send("MSG Attendi che l'altro giocatore finisca di piazzare le navi..."); 
+                avversario.listener.send("MSG Il tuo avversario si è collegato, attendi che finisca di piazzare le navi..."); 
             }
         }
     }
@@ -118,16 +115,16 @@ public class Player implements Runnable
             listener.send("MSG Inserisci la nave da 5"); //print a new line in output that specify to the player that he/she have to insert the boat
         }while(!inserisciNave(5)); //check if inserisciNave wasn't successful
         
-        if(this.avversario==null) //check if there isn't another player connectto the server
+        if(this.avversario==null) //check if there isn't another player connected to the server
         {   
             listener.send("STA WAT");
-            listener.send("MSG Attendi che un altro giocatore si connetta..."); //print a new line in output taht specify that theclient havn't an opponent
+            listener.send("MSG Attendi che un altro giocatore si connetta..."); //print a new line in output taht specify that the client havn't an opponent
             waiting = true;
         }
         else if(!avversario.waiting)
         {
             listener.send("STA WAT");
-            listener.send("MSG Attendi che l'altro giocatore finisca di piazzare le navi..."); //print a new line in output taht specify that theclient havn't an opponent
+            listener.send("MSG Attendi che l'avversario finisca di piazzare le navi..."); //print a new line in output taht specify that theclient havn't an opponent
             waiting = true;
         }
         else if(avversario.waiting)

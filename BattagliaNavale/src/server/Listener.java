@@ -5,6 +5,7 @@
  */
 package server;
 
+import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
@@ -23,12 +24,14 @@ public class Listener implements Runnable   //This is quite a mess, but it seems
     private Scanner input;
     private PrintWriter output;
     private final Thread thread;
+    private final Player player;
     public boolean requiredInput;
     String lastCommand;
     Semaphore commandPresent;
     
-    public Listener(Socket serverSocket)
+    public Listener(Socket serverSocket, Player p)
     {
+        player = p;
         running = true;
         this.socket = serverSocket;
         commandPresent = new Semaphore(0);
@@ -36,7 +39,7 @@ public class Listener implements Runnable   //This is quite a mess, but it seems
         {
             input = new Scanner(socket.getInputStream(), "UTF-8");
             output = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), "UTF-8"), true); 
-        } catch (Exception ex)
+        } catch (IOException ex)
         {}
         
         thread = new Thread(this, "listener");
@@ -77,7 +80,7 @@ public class Listener implements Runnable   //This is quite a mess, but it seems
             }
             catch(java.util.NoSuchElementException ex)
             {
-                //I need a reference to Player or Partita
+                player.avversario.listener.send("DIS");
             }
         }
     }
