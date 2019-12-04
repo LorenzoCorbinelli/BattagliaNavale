@@ -27,14 +27,14 @@ public class messageListener implements Runnable
     private BattagliaNavaleClient client;
     private final Thread thread;
     
-    public messageListener(String serverAddress, BattagliaNavaleClient c)
+    public messageListener(String serverAddress, BattagliaNavaleClient c, int port)
     {
         client = c;
         running = true;
         
         try
         {
-            socket = new Socket(serverAddress, 42069);
+            socket = new Socket(serverAddress, port);
             input = new Scanner(socket.getInputStream(), "UTF-8");
             output = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), "UTF-8"), true); 
         } catch (IOException ex)

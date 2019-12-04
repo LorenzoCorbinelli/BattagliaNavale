@@ -10,27 +10,22 @@ public class Partita
 {
     private final int dimensione; //declaration of new variable for the dimensions of the player's court
     public boolean inProgress;
+    public int porta;
     public ArrayList<Player> Players; //declaration of new Player variable that can identify the current player
     
-    public Partita()
-    {
-        this.dimensione = 21; //new value assigned to dimensione's variable
-        this.inProgress = true; //Ricordarsi di impostare le variabili potrebbe salvarti diverse ore di lavoro...
-        Players = new ArrayList<>();
-        this.start(); //call the start() method
-    }
     
-    public Partita(int dimensioneGriglia) //constructor with parameters (the dimensions of the player's court)
+    public Partita(int dimensioneGriglia, int porta) //constructor with parameters (the dimensions of the player's court)
     {
         this.dimensione = dimensioneGriglia; //parameter dimensions assigned to local variable dimensione
         this.inProgress = true;
+        this.porta=porta;
         Players = new ArrayList<>();
         this.start(); //call the start() method
     }
 
     private void start() //method start 
     {
-        try (ServerSocket listener = new ServerSocket(42069)) //try to connect server with client at the port '42069' 
+        try (ServerSocket listener = new ServerSocket(porta)) //try to connect server with client at the port '42069' 
         {
             System.out.println("Welcome to the Ultimate Battleship server! Current version: 1.0\nWaiting for players to connect..."); //print that string (Server is running...)
             ExecutorService pool = Executors.newFixedThreadPool(4);

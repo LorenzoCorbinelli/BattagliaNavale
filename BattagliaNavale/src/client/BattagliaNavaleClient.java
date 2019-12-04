@@ -66,7 +66,7 @@ public final class BattagliaNavaleClient implements MouseListener, MouseMotionLi
         messageLabel.setForeground(Color.black);
     }
     
-    public BattagliaNavaleClient(String serverAddress)
+    public BattagliaNavaleClient(String serverAddress, int port)
     {
         status = "WAT";
         centralPanel = new JPanel(new BorderLayout());
@@ -124,7 +124,7 @@ public final class BattagliaNavaleClient implements MouseListener, MouseMotionLi
         fileMenu.add(jmi);
         
         if(!serverAddress.equals(""))
-            listener = new messageListener(serverAddress, this);
+            listener = new messageListener(serverAddress, this, port);
     }
     
     public void elencoNavi(ArrayList <String> dim)
@@ -710,7 +710,12 @@ public final class BattagliaNavaleClient implements MouseListener, MouseMotionLi
                 about.setIcon(icons);
                 break;
             case "Connetti":
-                listener = new messageListener(JOptionPane.showInputDialog("Inserisci l'indirizzo IP del server: ", "127.0.0.1"), this);
+                String addr = JOptionPane.showInputDialog("Inserisci l'indirizzo IP del server: ", "127.0.0.1");
+                int port = 42069;
+                String[] inputDialog = addr.split(":");
+                if(inputDialog.length>1)
+                    port=Integer.parseInt(inputDialog[1]);
+                listener = new messageListener(inputDialog[0], this,port);
                 break;
             case "Esci":
                 frame.dispose();

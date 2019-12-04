@@ -2,6 +2,7 @@
 package battaglianavale;
 import server.Partita;
 import client.*;
+import org.apache.commons.cli.*;
 
 public class BattagliaNavale 
 {
@@ -9,20 +10,44 @@ public class BattagliaNavale
     static Partita server;
     public static void main(String[] args) 
     {
-        if(args.length == 0)    //client
+        Options options = new Options();
+        options.addOption("s","server",false, "Server mode");
+        options.addOption("d","dimension",true, "Dimension");
+        options.addOption("P","port",true, "Port");
+        CommandLineParser parser = new DefaultParser();
+        CommandLine cmd = null;
+        try
         {
-            client = new BattagliaNavaleClient(""); //connessione del client al server sullo stesso host 
-        }
-        else if(args[0].equals("-server")) //server
-        {
-            if (args.length > 1) 
-                server = new Partita(Integer.parseInt(args[1]));
+            cmd = parser.parse( options, args);
+            
+            if(cmd.hasOption("s"))
+            {
+                int d=21;
+                int p=42069;
+
+                if(cmd.hasOption("d"))
+                    d=Integer.parseInt(cmd.getOptionValue("d"));
+                if(cmd.hasOption("P"))
+                    p=Integer.parseInt(cmd.getOptionValue("P"));
+                server = new Partita(d,p);
+            }
             else
-                server = new Partita();
+            {
+                String ip="";
+                int p=42069;
+
+                if(args.length>0)
+                    ip=args[0];
+                if(args.length>1)
+                    p=Integer.parseInt(args[1]);
+
+                client = new BattagliaNavaleClient(ip,p);
+            }
         }
-        else
+        catch(Exception e)
         {
-            System.out.println("<HELP>");
+            HelpFormatter formatter = new HelpFormatter();
+            formatter.printHelp( "ant", options );
         }
     }
     
