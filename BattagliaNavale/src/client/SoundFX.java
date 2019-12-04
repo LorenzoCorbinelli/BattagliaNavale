@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
+import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
@@ -30,11 +31,9 @@ public class SoundFX implements Runnable
         try {
             t = new Thread(this);
             this.f=new BufferedInputStream(file);
-            //this.mainTimeOut = duration;
-            this.clip = null;
-            this.inputStream = null;
-            this.clip = AudioSystem.getClip();
             this.inputStream = AudioSystem.getAudioInputStream(this.f);
+            DataLine.Info info = new DataLine.Info(Clip.class, inputStream.getFormat());
+            clip = (Clip)AudioSystem.getLine(info);
             t.start();
         } catch (LineUnavailableException ex) {} catch (UnsupportedAudioFileException | IOException ex) {
             System.out.println(ex);
