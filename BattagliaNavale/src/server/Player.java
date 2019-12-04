@@ -8,6 +8,8 @@ package server;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 import java.util.concurrent.Semaphore;
 
 /**
@@ -24,6 +26,7 @@ public class Player implements Runnable
     public Semaphore yourTurn;
     public Semaphore opponentTurn;
     public final Listener listener;
+    public Future task;
     
     public Player(Socket s, Partita p, Player avversario) //constructor with parameters (a socket and a Partita)
     {
@@ -241,9 +244,15 @@ public class Player implements Runnable
 
         do
         {
-            try {
+            try
+            {
                 yourTurn.acquire();
-            } catch (InterruptedException ex) {System.out.println("Interrotto!");}
+            } 
+            catch (InterruptedException ex)
+            {
+                Thread.currentThread().interrupt();//preserve the message
+                return;//Stop doing whatever I am doing and terminate
+            }
             
             if(partita.inProgress)
             {
@@ -388,5 +397,11 @@ public class Player implements Runnable
         listener.send("SND WIN");
         avversario.listener.send("LOS");
         avversario.listener.send("SND LOS");
+    }
+
+    void kill()
+    {
+        System.out.println("Am ded");
+        task.cancel(true);
     }
 }

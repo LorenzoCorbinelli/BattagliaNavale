@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class Partita
 {
@@ -33,7 +34,8 @@ public class Partita
             {   
                 Player opp = findFreePlayer();
                 Player np = new Player(listener.accept(),this,opp);
-                Players.add(np);
+                Future task = pool.submit(np);
+                np.task = task;
                 if(opp == null)
                     System.out.println("Player 1 joined. Waiting for Player 2...");
                 else
@@ -41,10 +43,10 @@ public class Partita
                     System.out.println("Player 2 joined. LET THE GAME BEGIN!");
                     opp.avversario = np;
                 }
-                pool.execute(np);
+                Players.add(np);
             }
         }
-        catch (Exception e) //if server doesn't connectto client
+        catch (Exception e) //if server doesn't connect to client
         {System.out.println(Arrays.toString(e.getStackTrace()));}
     }
     int getDimensioneCampo() //method getDimensioneCampo
