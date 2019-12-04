@@ -81,6 +81,8 @@ public class Listener implements Runnable   //This is quite a mess, but it seems
             catch(java.util.NoSuchElementException ex)
             {
                 player.avversario.listener.send("DIS");
+                player.kill();
+                break;
             }
         }
     }
@@ -88,9 +90,11 @@ public class Listener implements Runnable   //This is quite a mess, but it seems
     public String getCommand()
     {
         requiredInput = true;
-        try {
+        try
+        {
             commandPresent.acquire();
-        } catch (InterruptedException ex) {}
+        }
+        catch (InterruptedException ex) {}
         String ret = lastCommand;
         lastCommand = null;
         return ret;
