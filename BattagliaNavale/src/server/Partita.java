@@ -9,28 +9,28 @@ import java.util.concurrent.Future;
 
 public class Partita
 {
-    private final int dimensione; //declaration of new variable for the dimensions of the player's court
+    private final int dimensione;
     public boolean inProgress;
     public int porta;
-    public ArrayList<Player> Players; //declaration of new Player variable that can identify the current player
+    public ArrayList<Player> Players; //active players
     
     
-    public Partita(int dimensioneGriglia, int porta) //constructor with parameters (the dimensions of the player's court)
+    public Partita(int dimensioneGriglia, int porta)
     {
-        this.dimensione = dimensioneGriglia; //parameter dimensions assigned to local variable dimensione
+        this.dimensione = dimensioneGriglia;
         this.inProgress = true;
         this.porta=porta;
         Players = new ArrayList<>();
-        this.start(); //call the start() method
+        this.start();
     }
 
-    private void start() //method start 
+    private void start() 
     {
-        try (ServerSocket listener = new ServerSocket(porta)) //try to connect server with client at the port '42069' 
+        try (ServerSocket listener = new ServerSocket(porta))
         {
             System.out.println("Welcome to the Ultimate Battleship server! Current version: 1.0\nWaiting for players to connect..."); //print that string (Server is running...)
             ExecutorService pool = Executors.newFixedThreadPool(4);
-            while(true) //How many games can the server handle before shutting down at once? Infinite!
+            for(int i=0;;) //How many games can the server handle before shutting down at once? Infinite!
             {   
                 Player opp = findFreePlayer();
                 Player np = new Player(listener.accept(),this,opp);
@@ -40,18 +40,18 @@ public class Partita
                     System.out.println("Player 1 joined. Waiting for Player 2...");
                 else
                 {
-                    System.out.println("Player 2 joined. LET THE GAME BEGIN!");
+                    System.out.println("Player 2 joined. LET THE GAME N°" + i++ + " BEGIN!");
                     opp.avversario = np;
                 }
                 Players.add(np);
             }
         }
-        catch (Exception e) //if server doesn't connect to client
+        catch (Exception e)
         {System.out.println(Arrays.toString(e.getStackTrace()));}
     }
-    int getDimensioneCampo() //method getDimensioneCampo
+    int getDimensioneCampo()
     {
-        return this.dimensione; //return the value in dimensione's variable
+        return this.dimensione;
     }
     
     private Player findFreePlayer()

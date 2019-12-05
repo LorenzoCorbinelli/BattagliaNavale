@@ -1,7 +1,5 @@
 package client;
 
-
-
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,8 +15,6 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 
 public class SoundFX implements Runnable 
 {
-    //private static boolean tryToInterruptSound = false;
-    //private static long mainTimeOut;
     private Clip clip;
     private AudioInputStream inputStream;
     private long durationInMiliSeconds;

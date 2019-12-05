@@ -4,26 +4,26 @@ import java.util.ArrayList;
 
 public class Nave 
 {
-    public ArrayList<Pezzo> pezzi; //declaration of new variable
+    public ArrayList<Pezzo> pezzi;
     public boolean affondata = false;
     
-    public Nave() //constructor
+    public Nave()
     {
-        pezzi = new ArrayList<>(); //new instance of array
+        pezzi = new ArrayList<>();
     }
     
-    public Nave(ArrayList<Pezzo> pezzi) //constructor with parametetrs (a Pezzo's list of 'pezzi')
+    public Nave(ArrayList<Pezzo> pezzi)
     {
-        this.pezzi = new ArrayList<>(); //new istance of array
-        for(Pezzo p : pezzi) //for each Pezzo in array pezzi
+        this.pezzi = new ArrayList<>();
+        for(Pezzo p : pezzi)
         {
-            this.pezzi.add(p); //add a new pezzo
+            this.pezzi.add(p);
         }
     }
 
-    public boolean add(int x, int y) //method add with parameters (coordinates of pezzo)
+    public boolean add(int x, int y)
     {
-        return pezzi.add(new Pezzo(x,y)); //return true if a new istance of Pezzo with coordinates (x,y) is added to the list of pezzi
+        return pezzi.add(new Pezzo(x,y));
     }
     
     public boolean checkAffondata()

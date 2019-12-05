@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package server;
 
 import java.io.IOException;
@@ -12,10 +7,6 @@ import java.net.Socket;
 import java.util.Scanner;
 import java.util.concurrent.Semaphore;
 
-/**
- *
- * @author Ricca
- */
 public class Listener implements Runnable   //This is quite a mess, but it seems to be working
 {
 
@@ -81,7 +72,7 @@ public class Listener implements Runnable   //This is quite a mess, but it seems
             catch(java.util.NoSuchElementException ex)
             {
                 player.avversario.listener.send("DIS");
-                player.kill();
+                player.kill();  //Mama, just killed a man
                 break;
             }
         }

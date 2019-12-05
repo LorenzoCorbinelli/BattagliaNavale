@@ -10,7 +10,7 @@ import javax.swing.border.Border;
 
 public final class BattagliaNavaleClient implements MouseListener, MouseMotionListener, ActionListener
 {
-    private final JFrame frame;
+    public final JFrame frame;
     private final JMenuBar menuBar;
     private final JMenu fileMenu;
     private final JMenu helpMenu;
@@ -30,8 +30,8 @@ public final class BattagliaNavaleClient implements MouseListener, MouseMotionLi
     private int dim;
     private ImageIcon explosion;
     private messageListener listener; //Using threads comes with HUGE problems, like race conditions. They shuoldn'y cause many problems in this application, thus they're not checked (yet)
-    private int selectedShip = 0;
-    private ArrayList<Image> icons;
+    private int selectedShip;
+    private final ArrayList<Image> icons;
     private final Border tlBorder = BorderFactory.createMatteBorder(1, 1, 0, 0, Color.black);
     private final Border tlbBorder = BorderFactory.createMatteBorder(1, 1, 1, 0, Color.black);
     private final Border tlrBorder = BorderFactory.createMatteBorder(1, 1, 0, 1, Color.black);
@@ -129,6 +129,7 @@ public final class BattagliaNavaleClient implements MouseListener, MouseMotionLi
     
     public void elencoNavi(ArrayList <String> dim)
     {
+        selectedShip = 0;
         shipsPanel = new JPanel();
         ships = new JPanel[6][7];  
         shipsPanel.setLayout(new GridLayout(7, 6,0,3));
@@ -310,7 +311,7 @@ public final class BattagliaNavaleClient implements MouseListener, MouseMotionLi
     public void mouseReleased(MouseEvent e){}   //unused
 
     @Override
-    public void mouseEntered(MouseEvent e)  //TODO: Mancano controlli
+    public void mouseEntered(MouseEvent e)
     {
         this.mouseOverSquare = (Square) e.getSource();
         if(this.mouseOverSquare.getParent().equals(yourBoardPanel))
@@ -381,7 +382,7 @@ public final class BattagliaNavaleClient implements MouseListener, MouseMotionLi
     }
 
     @Override
-    public void mouseExited(MouseEvent e)   //TODO: Mancano controlli
+    public void mouseExited(MouseEvent e)
     {
         this.mouseOverSquare = null;
         Square source = (Square)e.getSource();
@@ -710,12 +711,16 @@ public final class BattagliaNavaleClient implements MouseListener, MouseMotionLi
                 about.setIcon(icons);
                 break;
             case "Connetti":
-                String addr = JOptionPane.showInputDialog("Inserisci l'indirizzo IP del server: ", "127.0.0.1");
-                int port = 42069;
-                String[] inputDialog = addr.split(":");
-                if(inputDialog.length>1)
-                    port=Integer.parseInt(inputDialog[1]);
-                listener = new messageListener(inputDialog[0], this,port);
+                String addr = JOptionPane.showInputDialog(frame,"Inserisci l'indirizzo IP del server: ", "127.0.0.1");
+                if(addr != null)
+                {
+                    reset();
+                    int port = 42069;
+                    String[] inputDialog = addr.split(":");
+                    if(inputDialog.length>1)
+                        port=Integer.parseInt(inputDialog[1]);
+                    listener = new messageListener(inputDialog[0], this,port);
+                }
                 break;
             case "Esci":
                 frame.dispose();
@@ -724,5 +729,18 @@ public final class BattagliaNavaleClient implements MouseListener, MouseMotionLi
             default:
                 break;
         }
+    }
+
+    void reset()
+    {
+        //yourBoardPanel.removeAll();
+        //opponentBoardPanel.removeAll();
+        //shipsPanel.removeAll();
+        if(yourBoardPanel != null)
+            frame.remove(yourBoardPanel);
+        if(opponentBoardPanel != null)
+            frame.remove(opponentBoardPanel);
+        if(shipsPanel != null)
+            centralPanel.remove(shipsPanel);
     }
 }

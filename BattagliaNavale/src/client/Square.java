@@ -3,10 +3,6 @@ package client;
 import java.awt.Color;
 import javax.swing.JPanel;
 
-/**
- *
- * @author informatica
- */
 class Square extends JPanel
 {
     private Color color;

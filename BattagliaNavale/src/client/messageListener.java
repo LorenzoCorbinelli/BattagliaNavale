@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package client;
 
 import java.io.IOException;
@@ -12,11 +7,8 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
+import javax.swing.JOptionPane;
 
-/**
- *
- * @author Ricca
- */
 public class messageListener implements Runnable
 {
 
@@ -26,17 +18,19 @@ public class messageListener implements Runnable
     private PrintWriter output;
     private BattagliaNavaleClient client;
     private final Thread thread;
+    private final String serverAddress;
+    private final int port;
     
     public messageListener(String serverAddress, BattagliaNavaleClient c, int port)
     {
         client = c;
         running = true;
+        this.serverAddress = serverAddress;
+        this.port = port;
         
         try
         {
-            socket = new Socket(serverAddress, port);
-            input = new Scanner(socket.getInputStream(), "UTF-8");
-            output = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), "UTF-8"), true); 
+            setup();
         } catch (IOException ex)
         {}
         
@@ -153,6 +147,24 @@ public class messageListener implements Runnable
                         break;
                     }
                     break;
+                case "DIS":
+                    try {
+                        socket.close();
+                    } catch (IOException ex) {}
+                    client.setError("L'avversario si è disconnesso");
+                    client.setStatus("WAT");
+                    Object[] options = {"Sì", "No"};
+                    if (JOptionPane.showOptionDialog(client.frame, "Il tuo avversario si è disconnesso.\nVuoi avviare un'altra partita?","Avviso",JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0])
+                        == JOptionPane.YES_OPTION)
+                    {
+                        client.reset();
+                        try
+                        {
+                            setup();
+                        }
+                        catch(IOException e){System.out.println(e);}
+                    }
+                    break;
             }
         }
     }
@@ -166,6 +178,13 @@ public class messageListener implements Runnable
         }
         ret = ret.substring(4, ret.length() - 1);
         return ret;
+    }
+
+    private void setup() throws IOException
+    {
+        socket = new Socket(serverAddress, port);
+        input = new Scanner(socket.getInputStream(), "UTF-8");
+        output = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), "UTF-8"), true); 
     }
     
 }
