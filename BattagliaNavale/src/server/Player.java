@@ -5,26 +5,34 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.Future;
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Player implements Runnable 
 { 
-    public Player avversario;
-    public Partita partita;
-    private final ArrayList<Nave> navi;
+    public Player opponent;
+    public BattagliaNavaleServer server;
+    private final ArrayList<Ship> ships;
     private final ArrayList<Position> moves;
-    public boolean waiting = false;
+    public boolean waiting;
     public Semaphore yourTurn;
     public Semaphore opponentTurn;
+    public final Semaphore rematchAnswered;
     public final Listener listener;
     public Future task;
+    public AtomicBoolean matchInProgress;     //Needs to be an object so it can be shared with the opponent
+    public boolean wantsRematch;
+    public boolean won;
     
-    public Player(Socket s, Partita p, Player avversario)
+    public Player(Socket s, BattagliaNavaleServer bns, Player opponent)
     {
-        this.partita = p;
-        this.navi = new ArrayList<>();
+        waiting = false;
+        won = false;
+        this.server = bns;
+        this.ships = new ArrayList<>();
         this.moves = new ArrayList<>();
         this.listener = new Listener(s, this);
-        this.avversario = avversario;
+        this.opponent = opponent;
+        this.rematchAnswered = new Semaphore(0);
     }
     
     @Override
@@ -37,20 +45,22 @@ public class Player implements Runnable
     private void Setup()
     {
         listener.send("STP"); //setup
-        listener.send("DIM " + partita.getDimensioneCampo());   //Grid size
+        listener.send("DIM " + server.getDimensioneCampo());   //Grid size
         elencoNavi();
-        if(avversario == null)
+        if(opponent == null)
         {
             yourTurn = new Semaphore(0);
             opponentTurn = new Semaphore(0);
+            matchInProgress = new AtomicBoolean(true);
         }
         else
         {
-            yourTurn = avversario.opponentTurn;
-            opponentTurn = avversario.yourTurn;
-            if(avversario.waiting)
+            yourTurn = opponent.opponentTurn;
+            opponentTurn = opponent.yourTurn;
+            matchInProgress = opponent.matchInProgress;
+            if(opponent.waiting)
             {
-                avversario.listener.send("MSG Il tuo avversario si è collegato, attendi che finisca di piazzare le navi..."); 
+                opponent.listener.send("MSG Il tuo avversario si è collegato, attendi che finisca di piazzare le navi..."); 
             }
         }
     }
@@ -108,19 +118,19 @@ public class Player implements Runnable
             listener.send("MSG Inserisci la nave da 5");
         }while(!inserisciNave(5));
         
-        if(this.avversario==null)
+        if(this.opponent==null)
         {   
             listener.send("STA WAT");
             listener.send("MSG Attendi che l'avversario si connetta...");
             waiting = true;
         }
-        else if(!avversario.waiting)
+        else if(!opponent.waiting)
         {
             listener.send("STA WAT");
             listener.send("MSG Attendi che l'avversario finisca di piazzare le navi...");
             waiting = true;
         }
-        else if(avversario.waiting)
+        else if(opponent.waiting)
         {
             listener.send("STA WAT");
             listener.send("MSG Turno dell'avversario");
@@ -148,9 +158,9 @@ public class Player implements Runnable
             
             if(check) //start assembling the ship
             {
-                for(Nave n : navi) 
+                for(Ship n : ships) 
                 {
-                    for(Pezzo p : n.pezzi)
+                    for(Piece p : n.pieces)
                     {
                         listener.send("PIE " + p.x + ' ' + p.y);
                     }
@@ -170,46 +180,46 @@ public class Player implements Runnable
         if( x < 0 || y < 0)
             return false;   //Out of Bounds, return
         
-        ArrayList<Pezzo> compnave = new ArrayList<>();
+        ArrayList<Piece> compnave = new ArrayList<>();
         
         switch (dir) {
             case 'n':
                 for(int i = y; i>y-l; i--)
                 {
-                    if(i < 0 || i >= partita.getDimensioneCampo())   //Out of Bounds, return
+                    if(i < 0 || i >= server.getDimensioneCampo())   //Out of Bounds, return
                         return false;
-                    compnave.add(new Pezzo(x,i));
+                    compnave.add(new Piece(x,i));
                 }   break;
             case 'e':
                 for(int i = x; i<x+l; i++)
                 {
-                    if(i < 0 || i >= partita.getDimensioneCampo())   //Out of Bounds, return
+                    if(i < 0 || i >= server.getDimensioneCampo())   //Out of Bounds, return
                         return false;
-                    compnave.add(new Pezzo(i,y));
+                    compnave.add(new Piece(i,y));
                 }   break;
             case 's':
                 for(int i = y; i<y+l; i++)
                 {
-                    if(i < 0 || i >= partita.getDimensioneCampo())   //Out of Bounds, return
+                    if(i < 0 || i >= server.getDimensioneCampo())   //Out of Bounds, return
                         return false;
-                    compnave.add(new Pezzo(x,i));
+                    compnave.add(new Piece(x,i));
                 }   break;
             case 'w':
                 for(int i = x; i>x-l; i--)
                 {
-                    if(i < 0 || i >= partita.getDimensioneCampo())   //Out of Bounds, return
+                    if(i < 0 || i >= server.getDimensioneCampo())   //Out of Bounds, return
                         return false;
-                    compnave.add(new Pezzo(i,y));
+                    compnave.add(new Piece(i,y));
                 }   break;
             default:
                 return false;
         }
 
-        for (Pezzo c : compnave)
+        for (Piece c : compnave)
         {
-            for (Nave n : navi)
+            for (Ship n : ships)
             {
-                for (Pezzo p : n.pezzi)
+                for (Piece p : n.pieces)
                 {
                     for(int i = c.x - 1; i <= c.x + 1; i++)
                     {
@@ -223,7 +233,7 @@ public class Player implements Runnable
             }
         }
         
-        navi.add(new Nave(compnave));
+        ships.add(new Ship(compnave));
         return true;
     }
 
@@ -243,8 +253,7 @@ public class Player implements Runnable
                 Thread.currentThread().interrupt();
                 return;
             }
-            
-            if(partita.inProgress)
+            if(matchInProgress.get())
             {
                 do
                 {
@@ -272,43 +281,43 @@ public class Player implements Runnable
                     
                     //AGGIUNGERE CONTROLLI
                     listener.send("BRD");
-                    avversario.listener.send("BRD");
-                    for (Nave n : avversario.navi)
+                    opponent.listener.send("BRD");
+                    for (Ship n : opponent.ships)
                     {
-                        if(!n.affondata)
+                        if(!n.sunk)
                         {
-                            for (Pezzo p : n.pezzi)
+                            for (Piece p : n.pieces)
                             {
                                 if(p.x == x && p.y == y)
                                 {
-                                    p.colpito = true;
+                                    p.hit = true;
                                     hit = true;
                                 }
                             }
 
                             if(n.checkAffondata())
                             {
-                                for(Pezzo p: n.pezzi)
+                                for(Piece p: n.pieces)
                                 {
                                     for(int i = p.x - 1; i <= p.x + 1; i++)
                                     {
                                         for(int j = p.y - 1; j <= p.y + 1; j++)
                                         {
-                                            if(i >= 0 && i < partita.getDimensioneCampo() && j >= 0 && j < partita.getDimensioneCampo())
+                                            if(i >= 0 && i < server.getDimensioneCampo() && j >= 0 && j < server.getDimensioneCampo())
                                             {
                                                 listener.send("WAT " + i + " " + j);
-                                                avversario.listener.send("THW " + i + " " + j);
+                                                opponent.listener.send("THW " + i + " " + j);
                                                 moves.add(new Position(i,j));
                                             }
                                         }
                                     }
                                 }
-                                for(Pezzo p: n.pezzi)
+                                for(Piece p: n.pieces)
                                 {
-                                    if(p.colpito)
+                                    if(p.hit)
                                     {
                                         listener.send("HIT " + p.x + " " + p.y);
-                                        avversario.listener.send("THY " + p.x + " " + p.y);
+                                        opponent.listener.send("THY " + p.x + " " + p.y);
                                     }
                                 }
                             }
@@ -318,7 +327,7 @@ public class Player implements Runnable
                             if(hit)
                             {
                                 listener.send("HIT " + x + " " + y);
-                                avversario.listener.send("THY " + x + " " + y);
+                                opponent.listener.send("THY " + x + " " + y);
                                 break;
                             }
                         }
@@ -326,22 +335,22 @@ public class Player implements Runnable
 
                     moves.add(new Position(x,y));
                     listener.send("END");
-                    avversario.listener.send("END");
+                    opponent.listener.send("END");
                     
                     if(hit)
                     {
                         listener.send("SND EXP");
                     }
                     
-                    checkWin();
-                }while(hit && partita.inProgress);
+                    won = checkWin();
+                }while(hit && matchInProgress.get());
             }
             
-            if(partita.inProgress)
+            if(matchInProgress.get())
             {
                 listener.send("WAT " + x + " " + y);
                 listener.send("SND SPL");
-                avversario.listener.send("THW " + x + " " + y);
+                opponent.listener.send("THW " + x + " " + y);
 
                 listener.send("STA WAT");
                 listener.send("MSG È il turno dell'avversario");
@@ -351,42 +360,79 @@ public class Player implements Runnable
             else
             {
                 listener.send("END");
-                avversario.listener.send("END");
+                opponent.listener.send("END");
+                if(won)
+                    win();
+                else
+                    lost();
             }
-        }while(partita.inProgress);
+        }while(matchInProgress.get());
         System.out.println("Aight, Imma head out");
     }
 
-    private synchronized void checkWin()
+    private boolean checkWin()
     {
-        for(Nave n : avversario.navi)
+        for(Ship n : opponent.ships)
         {
-            if (!n.affondata)
-               return;
+            if (!n.sunk)
+               return false;
         }
-        win();
-        partita.inProgress=false;
+        matchInProgress.set(false);
+        return true;
     }
     
     private void NotHit()   //ships not hit
     {
-        for(Nave n : navi)
+        for(Ship n : opponent.ships)
         {
-            for(Pezzo P : n.pezzi)
+            for(Piece P : n.pieces)
             {
-                if(!P.colpito)
-                    avversario.listener.send("SNH " + P.x + " " + P.y);
+                if(!P.hit)
+                    listener.send("SNH " + P.x + " " + P.y);
             }
         }
     }
     
     private void win() 
     {
-        NotHit();
+        opponentTurn.release();
         listener.send("WIN");
         listener.send("SND WIN");
-        avversario.listener.send("LOS");
-        avversario.listener.send("SND LOS");
+        rematch();
+    }
+    
+    private void lost()
+    {
+        NotHit();
+        listener.send("LOS");
+        listener.send("SND LOS");
+        rematch();
+    }
+    
+    private void rematch()
+    {
+        if(listener.getCommand().equals("REM"))
+        {
+            wantsRematch = true;
+            rematchAnswered.release();
+            try {
+                opponent.rematchAnswered.acquire();
+            } catch (InterruptedException ex)
+            {}
+            if(opponent.wantsRematch)
+            {
+                waiting = false;
+                ships.clear();
+                moves.clear();
+                matchInProgress.set(true);
+                run();  //restart
+            }
+        }
+        else
+        {
+            rematchAnswered.release();
+            task.cancel(true);
+        }
     }
 
     void kill()

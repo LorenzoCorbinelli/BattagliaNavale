@@ -56,6 +56,7 @@ public class messageListener implements Runnable
     @Override
     public void run()
     {
+        Object[] options = {"Sì", "No"};
         String[] command;
         while(running && input.hasNextLine())
         {
@@ -109,9 +110,13 @@ public class messageListener implements Runnable
                     break;
                 case "WIN":
                     client.setText("Ammettilo, hai speso delle ore a pianifacare l'attacco. (Hai vinto)");
+                    rematch(JOptionPane.showOptionDialog(client.frame, "Congratulazioni, hai vinto.\nVuoi la rivincita?","Avviso",JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0])
+                        == JOptionPane.YES_OPTION);
                     break;
                 case "LOS":
                     client.setText("Non c'è vento favorevole al marinaio che non sa dove andare! (Hai perso)");
+                    rematch(JOptionPane.showOptionDialog(client.frame, "Congratulazioni, non hai vinto!!!\nVuoi la rivincita?","Avviso",JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0])
+                        == JOptionPane.YES_OPTION);
                     break;
                 case "SNH": //Ships Not Hit
                     client.drawNotHit(Integer.parseInt(command[1]), Integer.parseInt(command[2]));
@@ -148,20 +153,17 @@ public class messageListener implements Runnable
                     }
                     break;
                 case "DIS":
-                    try {
+                    try
+                    {
                         socket.close();
                     } catch (IOException ex) {}
                     client.setError("L'avversario si è disconnesso");
                     client.setStatus("WAT");
-                    Object[] options = {"Sì", "No"};
-                    if (JOptionPane.showOptionDialog(client.frame, "Il tuo avversario si è disconnesso.\nVuoi avviare un'altra partita?","Avviso",JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0])
+                    if (JOptionPane.showOptionDialog(client.frame, "Il tuo avversario si è disconnesso.\nVuoi avviare una nuova partita?","Avviso",JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0])
                         == JOptionPane.YES_OPTION)
                     {
                         client.reset();
-                        try
-                        {
-                            setup();
-                        }
+                        try {setup();}
                         catch(IOException e){System.out.println(e);}
                     }
                     break;
@@ -185,6 +187,25 @@ public class messageListener implements Runnable
         socket = new Socket(serverAddress, port);
         input = new Scanner(socket.getInputStream(), "UTF-8");
         output = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), "UTF-8"), true); 
+    }
+
+    private void rematch(boolean b)
+    {
+        if(b)
+        {
+            send("REM");    //Rematch
+            input.nextLine();
+            client.reset();
+            client.setText("In attesa dell'avversario");
+        }
+        else
+        {
+            try
+            {
+                socket.close();
+            } catch (IOException ex) {}
+            running = false;
+        }
     }
     
 }

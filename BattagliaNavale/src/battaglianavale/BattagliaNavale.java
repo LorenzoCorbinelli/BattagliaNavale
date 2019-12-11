@@ -1,13 +1,13 @@
 
 package battaglianavale;
-import server.Partita;
+import server.BattagliaNavaleServer;
 import client.*;
 import org.apache.commons.cli.*;
 
 public class BattagliaNavale 
 {
     static BattagliaNavaleClient client;
-    static Partita server;
+    static BattagliaNavaleServer server;
     public static void main(String[] args) 
     {
         Options options = new Options();
@@ -33,7 +33,7 @@ public class BattagliaNavale
                     p=Integer.parseInt(cmd.getOptionValue("P"));
                 if(cmd.hasOption("m"))
                     m=Integer.parseInt(cmd.getOptionValue("m"));
-                server = new Partita(d,p);
+                server = new BattagliaNavaleServer(d,p);
             }
             else
             {

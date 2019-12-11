@@ -7,26 +7,24 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-public class Partita
+public class BattagliaNavaleServer
 {
-    private final int dimensione;
-    public boolean inProgress;
-    public int porta;
+    private final int gridSize;
+    public int port;
     public ArrayList<Player> Players; //active players
     
     
-    public Partita(int dimensioneGriglia, int porta)
+    public BattagliaNavaleServer(int gridSize, int port)
     {
-        this.dimensione = dimensioneGriglia;
-        this.inProgress = true;
-        this.porta=porta;
+        this.gridSize = gridSize;
+        this.port=port;
         Players = new ArrayList<>();
         this.start();
     }
 
     private void start() 
     {
-        try (ServerSocket listener = new ServerSocket(porta))
+        try (ServerSocket listener = new ServerSocket(port))
         {
             System.out.println("Welcome to the Ultimate Battleship server! Current version: 1.0\nWaiting for players to connect..."); //print that string (Server is running...)
             ExecutorService pool = Executors.newFixedThreadPool(4);
@@ -40,8 +38,8 @@ public class Partita
                     System.out.println("Player 1 joined. Waiting for Player 2...");
                 else
                 {
-                    System.out.println("Player 2 joined. LET THE GAME N°" + i++ + " BEGIN!");
-                    opp.avversario = np;
+                    System.out.println("Player 2 joined. LET THE GAME N°" + ++i + " BEGIN!");
+                    opp.opponent = np;
                 }
                 Players.add(np);
             }
@@ -51,14 +49,14 @@ public class Partita
     }
     int getDimensioneCampo()
     {
-        return this.dimensione;
+        return this.gridSize;
     }
     
     private Player findFreePlayer()
     {
         for(Player p : Players)
         {
-            if(p.avversario == null)
+            if(p.opponent == null)
                 return p;
         }
         return null;

@@ -71,14 +71,15 @@ public class Listener implements Runnable   //This is quite a mess, but it seems
             }
             catch(java.util.NoSuchElementException ex)
             {
-                player.avversario.listener.send("DIS");
+                player.opponent.listener.send("DIS");
                 player.kill();  //Mama, just killed a man
+                player.opponent.kill();
                 break;
             }
         }
     }
     
-    public String getCommand()
+    public String getCommand()  //Can cause problems if the listener thread doesn't get blocked before the message is recieved
     {
         requiredInput = true;
         try

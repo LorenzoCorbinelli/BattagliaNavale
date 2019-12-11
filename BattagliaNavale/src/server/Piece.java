@@ -1,12 +1,12 @@
 package server;
 
-public class Pezzo
+public class Piece
 {
     public int x;
     public int y;
-    public boolean colpito = false;
+    public boolean hit = false;
     
-    public Pezzo(int x, int y)
+    public Piece(int x, int y)
     {
         this.x = x;
         this.y = y;
